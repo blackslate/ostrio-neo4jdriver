@@ -1,6 +1,6 @@
 Package.describe({
   name: 'ostrio:neo4jdriver',
-  summary: 'Meteor.js node-neo4j wrapper to be used with meteor applications (a.k.a. neo4j Connector)',
+  summary: 'Neo4j REST API client, with support of https and GrapheneDB',
   version: '1.0.0',
   git: 'https://github.com/VeliovGroup/ostrio-neo4jdriver.git'
 });
@@ -11,6 +11,7 @@ Package.onUse(function(api) {
     'helpers.coffee',
     'cursor.coffee',
     'data.coffee',
+    'relationship.coffee',
     'node.coffee',
     'endpoint.coffee',
     'transaction.coffee',
@@ -19,6 +20,7 @@ Package.onUse(function(api) {
 
   api.export([
     'Neo4jCursor',
+    'Neo4jRelationship',
     'Neo4jNode',
     'Neo4jData',
     'Neo4jEndpoint',

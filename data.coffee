@@ -7,7 +7,12 @@
 @class Neo4jData
 ###
 class Neo4jData
-  constructor: (@_node, @_isReactive = false, @_expiration = 0) -> @__refresh()
+  constructor: (@_node, @_isReactive = false, @_expiration = 0) -> 
+    if @_node?._service
+      @_service = _.clone @_node._service
+      @_node._service = undefined
+
+    @__refresh()
   __refresh: -> @_expire = (+new Date) + @_expiration * 1000
 
   @define 'node',
@@ -32,12 +37,12 @@ class Neo4jData
 
   ###
   @locus Server
-  @summary Update Neo4j data, only if data was requested as REST
+  @summary Update Neo4j data, only if data was requested as REST and instance is reactive
   @name update
   @class Neo4jData
   @url http://neo4j.com/docs/2.2.5/rest-api-nodes.html#rest-api-get-node
   @returns {Object | [Object] | [String]} - Depends from cypher query
   ###
   update: ->
-    @node = @_node._service.self.__getAndProceed '__parseNode' if @_node?._service
+    @node = @_service.self.__getAndProceed '__parseNode' if @_node and @_service and @_isReactive
     return @

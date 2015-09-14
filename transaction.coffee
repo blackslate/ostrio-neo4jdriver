@@ -1,7 +1,7 @@
 ###
 @locus Server
 @summary Implementation of Transactional Cypher HTTP endpoint
-         Event-driven and chainable
+         This class is event-driven and all methods is chainable
          Have to be finished by calling `.commit()` or `.rollback()` method
 @class Neo4jTransaction
 @url http://neo4j.com/docs/2.2.5/rest-api-transactional.html
@@ -69,8 +69,7 @@ class Neo4jTransaction
     unless error
       @_db.__cleanUpResponse response, (result) => @_results.push new Neo4jCursor @_db.__transformData result, reactive
     else
-      console.error error
-      console.trace()
+      __error new Error error
 
   ###
   @locus Server

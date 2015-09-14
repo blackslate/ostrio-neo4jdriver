@@ -65,8 +65,7 @@ class Neo4jDB
         unless error
           @__cleanUpResponse response, (result) => @__proceedResult result
         else
-          console.error error
-          console.trace()
+          __error new Error error
 
   __cleanUpResponse: (response, cb) ->
     if response?.data and _.isObject response.data
@@ -75,13 +74,10 @@ class Neo4jDB
       try
         @__cleanUpResults JSON.parse(response.content), cb
       catch error
-        console.error "Neo4j response error (Check your cypher queries):", [response.statusCode], error
-        console.error "Original received data:"
-        console.log response.content
-        console.trace()
+        __error "Neo4j response error (Check your cypher queries):", [response.statusCode], error
+        __error "Originally received data:"
     else
-      console.error "Empty response from Neo4j, but expecting data"
-      console.trace()
+      __error "Empty response from Neo4j, but expecting data"
 
   __cleanUpResults: (results, cb) ->
     if results?.results or results?.errors
@@ -89,7 +85,7 @@ class Neo4jDB
       results = results?.results
 
     unless _.isEmpty errors
-      console.error error.code, error.message for error in errors
+      __error error.code, error.message for error in errors
     else if not _.isEmpty results
       cb result for result in results
 
@@ -99,8 +95,8 @@ class Neo4jDB
         @emit result.id, null, result.body, result.id
       else
         for error in result.body.errors
-          console.error error.message
-          console.error {code: error.code}
+          __error error.message
+          __error {code: error.code}
         @emit result.id, error?.message, [], result.id
     else
       @emit result.id, null, [], result.id
@@ -121,7 +117,8 @@ class Neo4jDB
             fut.return if noTransform then response else @__transformData _.clone(response), reactive
     else
       @once task.id, (error, response) =>
-        bound => callback error, if noTransform then response else @__transformData _.clone(response), reactive
+        bound => 
+          callback error, if noTransform then response else @__transformData _.clone(response), reactive
 
   __connect: -> 
     response = @__call @root
@@ -137,9 +134,9 @@ class Neo4jDB
                   @__service[key] = new Neo4jEndpoint key, endpoint, @
                 else
                   @__service[key] = get: -> endpoint
-                console.success "v#{endpoint}" if key is "neo4j_version"
+                __success "v#{endpoint}" if key is "neo4j_version"
             @emit 'ready'
-            console.success "Successfully connected to Neo4j on #{@url}"
+            __success "Successfully connected to Neo4j on #{@url}"
         else
           throw new Error JSON.stringify response
     else
@@ -186,9 +183,8 @@ class Neo4jDB
       else
         return request method, url, options.data, options, callback
     catch error
-      console.error "Error sending request to Neo4j (GrapheneDB) server:"
-      console.error error
-      console.trace()
+      __error "Error sending request to Neo4j (GrapheneDB) server:"
+      __error new Error error
 
   __parseNode: (currentNode) ->
     if currentNode?.metadata or currentNode?.data
@@ -202,10 +198,10 @@ class Neo4jDB
 
       if currentNode?['start']
         paths = currentNode.start.split '/'
-        nodeData.start = paths[paths.length - 1]
+        nodeData.start = parseInt paths[paths.length - 1]
       if currentNode?['end']
         paths = currentNode.end.split '/'
-        nodeData.end = paths[paths.length - 1]
+        nodeData.end = parseInt paths[paths.length - 1]
 
       return _.extend node, nodeData
     else
@@ -221,8 +217,8 @@ class Neo4jDB
         for key, value of result.graph
           if _.isArray(value) and value.length > 0
             for n in value
-              node.nodes.push new Neo4jData(@__parseNode(n), reactive) if key is 'nodes'
-              node.relationships.push new Neo4jData(@__parseNode(n), reactive) if key is 'relationships'
+              node.nodes.push new Neo4jData @__parseNode(n), reactive if key is 'nodes'
+              node.relationships.push new Neo4jRelationship @, n, reactive if key is 'relationships'
 
       if result?.row
         row = 
@@ -242,7 +238,10 @@ class Neo4jDB
       if row.node?[index]
         if _.isObject row.node[index]
           if row.isRest
-            node[column] = new Neo4jNode @, row.node[index], reactive
+            if row.node[index]?.start and row.node[index]?.end
+              node[column] = new Neo4jRelationship @, row.node[index], reactive
+            else
+              node[column] = new Neo4jNode @, row.node[index], reactive
           else
             node[column] = new Neo4jData row.node[index], false
         else
@@ -263,7 +262,7 @@ class Neo4jDB
           parsed = parsed.concat @__parseResponse result.data, result.columns, reactive
         return parsed
       else
-        console.error response.exception
+        __error response.exception
 
     if response?.columns and response?.data
       unless _.isEmpty response.data
@@ -272,15 +271,35 @@ class Neo4jDB
         return []
 
     if response?.data and response?.metadata
-      return new Neo4jData @__parseNode(response), if response?.self then reactive else false
-    
+      if response?.start and response?.end
+        return new Neo4jRelationship @, response, if response?.self then reactive else false
+      else if response?.self
+        return new Neo4jNode @, response, if response?.self then reactive else false
+      else
+        return new  Neo4Data @__parseNode(response), if response?.self then reactive else false
+
+    if _.isArray(response) and response.length > 0
+      result = []
+      hasData = false
+      for row in response
+        if _.isObject(row) and (row?.data or row?.metadata)
+          hasData = true
+          if row?.start and row?.end
+            result.push new Neo4jRelationship @, row, if row?.self then reactive else false
+          else if row?.self
+            result.push new Neo4jNode @, row, if row?.self then reactive else false
+          else
+            result.push new Neo4Data @__parseNode(row), if row?.self then reactive else false
+
+      return result if hasData
+
     return new Neo4jData response
 
   __getCursor: (task, callback, reactive) ->
     unless callback
       return __wait (fut) =>
         @__batch task, (error, data) ->
-          console.error error if error
+          __error error if error
           fut.return new Neo4jCursor data
         , reactive
     else
@@ -341,7 +360,8 @@ class Neo4jDB
     data = @__batch
       method: "GET"
       to: "/propertykeys"
-    data = data.get() if _.isFunction data.get
+    , undefined, false, true
+    data = data.get() if _.isFunction data?.get
     return data
 
   ###
@@ -514,12 +534,21 @@ class Neo4jDB
   @param {String}   tasks.$.to - Endpoint (URL) for task
   @param {Number}   tasks.$.id - [Optional] Unique id to identify task. Should be always unique!
   @param {Object}   tasks.$.body - [Optional] JSONable object which will be sent as data to task
-  @param {Function} callback - callback function, if present `batch()` method will be called asynchronously
-  @param {Boolean}  reactive - if `true` and if `plain` is true data of node(s) will be updated before returning
-  @param {Boolean}  plain - if `true`, results will be returned as simple objects instead of Neo4jCursor
+  @param {Object}   settings
+  @param {Boolean}  settings.reactive - if `true` and if `plain` is true data of node(s) will be updated before returning
+  @param {Boolean}  settings.plain - if `true`, results will be returned as simple objects instead of Neo4jCursor
   @returns {[Object]} - array of Neo4jCursor(s) or array of Object id `plain` is `true`
   ###
-  batch: (tasks, callback, reactive = false, plain = false) ->
+  batch: (tasks, settings = {}, callback) ->
+    if _.isFunction settings
+      callback = settings
+      settings = {}
+    else
+      {reactive, plain} = settings
+
+    reactive ?= false
+    plain ?= false
+
     check tasks, [Object]
     check callback, Match.Optional Function
     check reactive, Boolean
@@ -571,9 +600,9 @@ class Neo4jDB
   ###
   @locus Server
   @summary Create or get node object.
-           If no arguments is passed, new node will be created.
-           If first argument is number, node will be fetched from Neo4j
-           If first argument is Object, new node will be created with passed properties
+           If no arguments is passed, then new node will be created.
+           If first argument is number, then node will be fetched from Neo4j
+           If first argument is Object, then new node will be created with passed properties
   @name nodes
   @class Neo4jDB
   @url http://neo4j.com/docs/2.2.5/rest-api-nodes.html
@@ -582,3 +611,58 @@ class Neo4jDB
   @returns {Neo4jNode} - Neo4jNode instance
   ###
   nodes: (id, reactive) -> new Neo4jNode @, id, reactive
+
+  ###
+  @locus Server
+  @summary Create relationship between two nodes
+  @name createRelation
+  @class Neo4jDB
+  @url http://neo4j.com/docs/2.2.5/rest-api-relationships.html#rest-api-create-a-relationship-with-properties
+  @param {Number | Object | Neo4jNode} from - id or instance of node
+  @param {Number | Object | Neo4jNode} to - id or instance of node
+  @param {String} type - Type (label) of relationship
+  @param {Object} properties - Relationship's properties
+  @param {Boolean} properties._reactive - Set Neo4jRelationship instance to reactive mode
+  @returns {Neo4jRelationship}
+  ###
+  createRelation: (from, to, type, properties = {}) ->
+    from = from?.id or from?.get?().id if _.isObject from
+    to = to?.id or to?.get?().id if _.isObject to
+    check from, Number
+    check to, Number
+    check type, String
+    check properties, Object
+
+    if properties?._reactive
+      reactive = properties._reactive
+      delete properties._reactive
+
+    reactive ?= false
+
+    check reactive, Boolean
+
+    relationship = @__batch 
+      method: 'POST'
+      to: @__service.node.endpoint + '/' + from + '/relationships'
+      body: 
+        to: @__service.node.endpoint + '/' + to
+        type: type
+        data: properties
+    , undefined, reactive, true
+
+    new Neo4jRelationship @, relationship, reactive
+
+  ###
+  @locus Server
+  @summary Get relationship object, by id
+  @name getRelation
+  @class Neo4jDB
+  @url http://neo4j.com/docs/2.2.5/rest-api-relationships.html#rest-api-get-relationship-by-id
+  @param {Number} to - id or instance of node
+  @param {Boolean} reactive - Set Neo4jRelationship instance to reactive mode
+  @returns {Neo4jRelationship}
+  ###
+  getRelation: (id, reactive) -> 
+    check id, Number
+    check reactive, Match.Optional Boolean
+    new Neo4jRelationship @, id, reactive

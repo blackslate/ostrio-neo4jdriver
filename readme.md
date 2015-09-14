@@ -359,7 +359,6 @@ This last line shows that the ostrio-neo4jdriver is correctly installed and init
 
 From now any changes in ostrio:neo4jdriver package folder will cause your project app to rebuild.
 
-
 ##### Testing
 - Go to your project directory
 ```shell
