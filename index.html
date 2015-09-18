@@ -28,6 +28,7 @@
 <li><a href="#call">Calling from the browser</a></li>
 <li><a href="#visjs">Hello World with vis.js</a></li>
 <li><a href="#online">Getting your graph online</a></li>
+<li><a href="#reactive">Adding reactivity</a></li>
 <li></li>
 </ul>
 <h2>API</h2>
@@ -187,21 +188,18 @@ console.log(cursor.fetch())
 <pre class="prettyprint">v2.2.5
 Successfully connected to Neo4j on http://localhost:7474
 [ { hello: 
-     { _service: [Object],
-       name: 'Hello',
+     { name: 'Hello',
        id: 6,
        labels: [],
        metadata: [Object] },
     link: 
-     { _service: [Object],
-       id: 1,
+     { id: 1,
        type: 'LINK',
        metadata: [Object],
        start: '6',
        end: '42' },
     world: 
-     { _service: [Object],
-       name: 'World',
+     { name: 'World',
        id: 42,
        labels: [],
        metadata: [Object] }
@@ -250,7 +248,7 @@ $ touch client/templates/main.js</pre>
 </figure>
 <h3>Server-side data manipulation</h3>
 <p>On the server, there is more to do. Eventually, you are going to be showing a dynamic representation of your graph data in a <code>&lt;canvas&gt;</code> element, so it makes sense to retrieve the data you will be displaying in "graph" format.</p>
-<p>At the time of writing, there is no package for Meteor that allows you to create a representation of your graph in the browser using the native Neo4j data format. You will need to modify the format before you can display it. For now, it's good to take a look at the incoming Neo4j data format, and simply create a string to display in the browser. In the next section, you will see how to change it to a format that <a href="http://visjs.org/network_examples.html">vis.js</a> can use.</p>
+<p>At the time of writing, there is no package for Meteor that allows you to create a representation of your graph in the browser using the native Neo4j data structure. You will need to modify the format before you can display it. For now, it's good to take a look at the structure of the incoming Neo4j data, and simply create a string to display in the browser. In the next section, you will see how to change it to a format that <a href="http://visjs.org/network_examples.html">vis.js</a> can use.</p>
 <h3>db.graph()</h3>
 <p>You can use <code>db.graph(query[, options][, callback])</code> to request from the server a set of nodes and relationships that can be used to generate a visual representation of the graphic. The result will be returned as a <a href="https://docs.mongodb.org/manual/core/cursors/">MongoDB cursor</a>.</p>
 <p>If you provide a callback method, then the call to the Neo4j database will be made asynchronously. For now, you can keep it simple by making a synchronous call, which means that the result will be available to the very next line of code. This means that you can use <code>db.graph(...).fetch()</code> to convert the incoming cursor
@@ -618,12 +616,57 @@ Template.main.onRendered(function() {
 </section>
 
 <section>
-<h2><a id="online" class="anchor" href="#online" aria-hidden="true"><span class="octicon octicon-link"></span><code>Getting your graph online</code></a></h2>
+<h2><a id="online" class="anchor" href="#online" aria-hidden="true"><span class="octicon octicon-link"></span>Getting your graph online</a></h2>
 <p>Right now, your graph is interactive, but it is not dynamic. You can't make changes to the graph in your browser, and if data in the database changes, your view will not update. You can discover how to deal with this in the next section.</p>
-<p>Before you do that, though, it's good to deploy your database to an online site, like <a href="http://neo4jdriver.meteor.com/">this</a>, so that you can check that everything works from development to production.</p>
+<p>Before you do that, though, it's good to deploy your database to an online site, like <a href="http://neo4jdriver.meteor.com/">this</a>, so that you can check that everything works from development to production. The easiest way to do this is to set up a free hobby database with GrapheneDB, and to deploy your project to Meteor.com. This takes about 5 minutes.</p>
 <h3>Setting up a hobby database with GrapheneDB</h3>
-<p></p>
+<p>GrapheneDB is a commercial site that hosts Neo4j databases. Here's <a href="http://www.graphenedb.com/docs">a starting point</a>where you can learn more about what the site offers. In particular, they offer a free service where you can run a sandbox database with up to 1,000 nodes and 10,000 relationships. This should be enough to get you started. If you don't already have an account there, go to <a href="https://app.graphenedb.com/signup">https://app.graphenedb.com/</a> and fill in the signup form.</p>
+<figure>
+<img src="img/signup.png" alt="Creating an account on GrapheneDB" />
+<figcaption>Figure 5. Creating an account on GrapheneDB</figcaption>
+</figure>
+<p>On the next screen, simply click Create Database.</p>
+<figure>
+<img src="img/create_db.png" alt="Create your first database" />
+<figcaption>Figure 6. Create your first database</figcaption>
+</figure>
+<p>You'll now find yourself on a page that asks you to select your plan. The free sandbox database is already chosen for you by default.</p>
+<figure>
+<img src="img/choose_plan.png" alt="Select the free sandbox plan" />
+<figcaption>Figure 7. Select the free sandbox plan</figcaption>
+</figure>
+<p>Of course, you can choose a paying plan if you are already sure of your requirements. Scroll down to the bottom of the page and click on Create Database.</p>
+<figure>
+<img src="img/free.png" alt="Create your database" />
+<figcaption>Figure 8. Create your database</figcaption>
+</figure>
+<p>To find the connection details, click on the Connection tab. You'll find your REST URL, REST username and REST password.</p>
+<figure>
+<img src="img/settings.png" alt="Find your connection details" />
+<figcaption>Figure 9. Find your connection details</figcaption>
+</figure>
+<p>Copy these and paste them into the appropriate places at the top of your <code>server.js</code> script:</p>
+<pre class="revised">
+Meteor.startup(function() {
+  // Create the connection to the (remote) database. You may need to
+  // edit the URL, username and password
+  var db = new Neo4jDB(
+    '<span class="new">http://yourdatabasename.sb05.stations.graphenedb.com:24789/db/data/</span>'
+  , { username: '<span class="new">your_database_name</span>'
+    , password: '<span class="new">qeD0XV38hsBF6bWVQVkn</span>'
+    }
+  )</pre>
+<p>That's it. You're ready to go. Save the changes to your <code>server.js</code> script and let Meteor restart. Check that your application works locally using the new connection details. Now you're ready to deploy your application to Meteor.com.</p>
 <h3>Deploying to Meteor.com</h3>
+<p>In the Terminal window, change into the directory where your Meteor application is stored, then use a unique name of your own choosing to deploy your project to the Meteor hosting service:</p>
+<pre>$ <em>/path/to/your/project/</em>
+$ meteor deploy <em>uniquename</em>.meteor.com</pre>
+<p>Just as soon as your project is uploaded to the Meteor.com site, you'll be ready to test online. That's all there is to it.</p>
+<p class="aside note">If you want to host your database and your Meteor project on your own server, the process can be more complex. This is not treated in this tutorial. Using GrapheneDB and Meteor to test your application lets you know that the application itself is working correctly, so that you can focus your attention on setting up your own hosting without one less variable to deal with.</p>
+</section>
+
+<section>
+<h2><a id="reactive" class="anchor" href="#reactive" aria-hidden="true"><span class="octicon octicon-link"></span>Adding reactivity to your graph</a></h2>
 <p></p>
 </section>
 
@@ -711,7 +754,7 @@ Returns first result received from Neo4j
 <section>
 <h2><a id="querySync" class="anchor" href="#querySync" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.querySync(cypher, [opts])</code></a></h2></p>
 
-<p>Runs alway synchronously</p>
+<p>Runs always synchronously</p>
 <pre>
  - <code>cypher</code> {<em>String</em>} - Cypher query string
  - <code>opts</code> {<em>Object</em>} - JSON-able map of cypher query parameters
