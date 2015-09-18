@@ -607,7 +607,8 @@ Template.main.onRendered(function() {
       return visGraph</span>
     }
   })</pre>
-<p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may appear in multiple times too, but only one reference is needed.</p>
+<p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may appear in multiple times too, but only one reference is needed. The <code>nodeIds</code> and <code>edgeIds</code> arrays are used to track which nodes and edges have already been treated.</p>
+<p>In fact, the vis.DataSet object is designed to filter out any duplicates, but it is better to send the least amount of data from the server to the client.</p>
 <p>When you have read through the code and understand what it is doing, you can copy and paste into your <code>server.js</code> script, to replace the current <code>Meteor.methods</code> method. When you save, Meteor will restart and the browser will refresh. If all goes well, this is what you should see in your browser:</p>
 <figure>
 <img src="img/hello_world.png" alt="Hello World as a graph" />
@@ -619,8 +620,11 @@ Template.main.onRendered(function() {
 <section>
 <h2><a id="online" class="anchor" href="#online" aria-hidden="true"><span class="octicon octicon-link"></span><code>Getting your graph online</code></a></h2>
 <p>Right now, your graph is interactive, but it is not dynamic. You can't make changes to the graph in your browser, and if data in the database changes, your view will not update. You can discover how to deal with this in the next section.</p>
-<p>Before you do that, though, it's good to deploy your database to an online site, so that you can check that everything works from development to production.</p>
-
+<p>Before you do that, though, it's good to deploy your database to an online site, like <a href="http://neo4jdriver.meteor.com/">this</a>, so that you can check that everything works from development to production.</p>
+<h3>Setting up a hobby database with GrapheneDB</h3>
+<p></p>
+<h3>Deploying to Meteor.com</h3>
+<p></p>
 </section>
 
 <h1>API</h1>
