@@ -28,8 +28,18 @@
 <li><a href="#call">Calling from the browser</a></li>
 <li><a href="#visjs">Hello World with vis.js</a></li>
 <li><a href="#online">Getting your graph online</a></li>
-<li><a href="#reactive">Adding reactivity</a></li>
-<li></li>
+<li><a href="#reactive">Adding reactivity</a>
+<ul>
+<li>Using a timestamp</li>
+<li>Keeping track of time</li>
+<li>Long polling</li>
+<li>timestamp</li>
+<li>Refreshing</li>
+<li>Deleting</li>
+</ul>
+</li>
+
+<li><a href="#realtime">Realtime changes</a></li>
 </ul>
 <h2>API</h2>
 <ul>
@@ -123,6 +133,8 @@ logo: http://www.wikiartis.com/media/images/licenses/By-sa.png
 <li>To learn more about using Cypher, you can start with the <a href="http://neo4j.com/docs/2.2.5/cypher-refcard/">Neo4j cheat sheet</a>.
 </li>
 </ul>
+<h3>Assumptions</h3>
+<p>I assume that you already know something about Meteor and the Cypher query language for Neo4j. In particular, I assume that you know how to use Meteor templates, using the Spacebar markup in your HTML files and the <code>Template</code> object in your JavaScript files. If these words don't mean much to you, perhaps you should start with the official <a href="https://www.meteor.com/tutorials/blaze/creating-an-app">Meteor tutorial</a> or with <a href="https://www.meteor.com/tools/resources">one of the other learning resources available</a>. You can learn more about Cypher <a href="http://neo4j-contrib.github.io/developer-resources/">here</a>.</p>
 </section>
 
 <section>
@@ -451,7 +463,7 @@ Template.main.onRendered(function() {
       // { nodes: &lt;array of nodes&gt;, edges: &lt;array of edges&gt; }
       var nodesDS = new vis.DataSet(data.nodes)
       var edgesDS = new vis.DataSet(data.edges)
-      var visData = { nodes: nodesDS, edges: edgesDS }               
+      var visData = { nodes: nodesDS, edges: edgesDS }             
       var options = {}
 
       new vis.Network(container, visData, options)</span>
@@ -606,7 +618,6 @@ Template.main.onRendered(function() {
     }
   })</pre>
 <p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may appear in multiple times too, but only one reference is needed. The <code>nodeIds</code> and <code>edgeIds</code> arrays are used to track which nodes and edges have already been treated.</p>
-<p>In fact, the vis.DataSet object is designed to filter out any duplicates, but it is better to send the least amount of data from the server to the client.</p>
 <p>When you have read through the code and understand what it is doing, you can copy and paste into your <code>server.js</code> script, to replace the current <code>Meteor.methods</code> method. When you save, Meteor will restart and the browser will refresh. If all goes well, this is what you should see in your browser:</p>
 <figure>
 <img src="img/hello_world.png" alt="Hello World as a graph" />
@@ -645,15 +656,15 @@ Template.main.onRendered(function() {
 <img src="img/settings.png" alt="Find your connection details" />
 <figcaption>Figure 9. Find your connection details</figcaption>
 </figure>
-<p>Copy these and paste them into the appropriate places at the top of your <code>server.js</code> script:</p>
-<pre class="revised">
+<p>Copy these and paste them into the appropriate places at the top of your <code>server.js</code> script. Your changes might look something like this (but use your own values in place of the text <em>in italics</em>. <strong>Do not include <code>db/data/</code> at the end of the URL</strong>. If you do, the connection will fail, your Meteor app will throw errors, and your Terminal window will fill up with alarming message.</p>
+<pre>
 Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
   var db = new Neo4jDB(
-    '<span class="new">http://yourdatabasename.sb05.stations.graphenedb.com:24789/db/data/</span>'
-  , { username: '<span class="new">your_database_name</span>'
-    , password: '<span class="new">qeD0XV38hsBF6bWVQVkn</span>'
+    '<em>http://yourdatabasename.sb05.stations.graphenedb.com:24789/</em>'
+  , { username: '<em>your_database_name</em>'
+    , password: '<em>qeD0XV38hsBF6bWVQVkn</em>'
     }
   )</pre>
 <p>That's it. You're ready to go. Save the changes to your <code>server.js</code> script and let Meteor restart. Check that your application works locally using the new connection details. Now you're ready to deploy your application to Meteor.com.</p>
@@ -667,7 +678,272 @@ $ meteor deploy <em>uniquename</em>.meteor.com</pre>
 
 <section>
 <h2><a id="reactive" class="anchor" href="#reactive" aria-hidden="true"><span class="octicon octicon-link"></span>Adding reactivity to your graph</a></h2>
-<p></p>
+<p>You need to take two more steps to give your end-users a valuable experience:</p>
+<ol>
+<li>Add reactivity: update the graph display in the browser as changes are made to the data</li>
+<li>Add control: give your end-users a simple way to modify the data in real time directly in their browsers.</li>
+</ol>
+<p class="aside note">The Meteor.js Neo4j Driver is not designed to be reactive. It is designed to run on the server and to query the Neo4j database whenever it is asked to do so. The <a href="https://github.com/VeliovGroup/ostrio-Neo4jreactivity">Isomorphic Reactive Driver</a> is built on top of the Meteor.js Neo4j Driver, and it does provide reactivity. You might prefer to use the Isomorphic Reactive Driver and let it take care of everything for you. If you are interested in understanding how to use the Meteor.js Neo4j Driver in greater depth, then read on.</p>
+<p>The vis.Network object will update the graph display whenever the objects in its DataSets change. You can change what's in a DataSet in real time using <code>add()</code>, <code>remove()</code> and <a href="http://visjs.org/docs/data/dataset.html#Methods">other methods</a>. To know what to add, remove and modify, you need to keep asking the Neo4j database for updates on what has changed. To discover what has changed, you need a way to record when each change was made.</p>
+<h3>Using a timestamp</h3>
+<p>Neo4j does not provide a built-in way to set a timestamp on every node or edge each time it is changed. It is possible to create an <a href="http://neo4j.com/docs/stable/server-unmanaged-extensions.html">unmanaged extension</a> or to use GraphAware's <a href="https://github.com/graphaware/neo4j-framework/tree/master/tx-api">Improved Transaction Event API</a> to do this, but this requires writing code in Java, and is outside the scope of this tutorial.</p>
+<p>The alternative is to manually update the timestamp on an <code>updatedAt</code> field in every edge and node, each time a change is made. It's possible that different apps running on different servers all access the same database. The current time may be set differently on different servers, so it is better to get the database itself to create the timestamp. You can do this with by adding a call <a href="http://neo4j.com/docs/milestone/query-functions-scalar.html#functions-timestamp"><code>TIMESTAMP()</code></a> function to each <code>CREATE</code> and <code>UPDATE</code> query. Here are two ways to set the <code>updatedAt</code> field of a node to the current database time:</p>
+<pre>CREATE
+(n1 {name:"Time 1", updatedAt:TIMESTAMP()}),
+(n2 {name:"Time 2"})
+SET n2.updatedAt = TIMESTAMP()
+RETURN n1, n2</pre>
+<p>And here's how you can retrieve all the nodes that were updated less than a minute ago:</p>
+<pre>WITH TIMESTAMP() - 60 * 1000 AS aMinuteAgo
+MATCH (n)
+WHERE n.updatedAt > aMinuteAgo
+RETURN n</pre>
+<p>Here's a snippet you can add to your <code>server.js</code> script to ask the Neo4j database what it thinks the current time is,:</p>
+<pre>var timestamp = db.querySync(
+  "RETURN TIMESTAMP() AS now"
+).fetch()[0].now
+console.log("Time in Neo4j database:", timestamp)</pre>
+<p>Note the use of <code>querySynch()</code> so that the response is received before any further code is executed on the server.</p>
+<h3>Keeping track of time</h3>
+<p>Currently, the client makes a single call to the <code>graph</code> method on the server when the <code>main</code> template is first rendered. In this first call, you can retrieve all the data that you are interested in from the database, and save the time you made the query in a <code>timestamp</code> variable. You can get the client to repeat the call to the <code>graph</code> method an a regular basis, but only ask for nodes and edges that have been updated after the <code>timestamp</code> was set. You can then update the <code>timestamp</code>, ready for the next call.</p>
+<p>In the client, the <code>data</code> received in the callback from the <code>graph</code> method will now contain only elements that have changed recently (or nothing at all). Instead of creating a new DataSet, you will need to add, update or remove elements from a persistent DataSet, and let vis.js modify its display accordingly.</p>
+<p>For simplicity, you can start by only treating new elements. You'l see how to extend this to updated and deleted elements shortly.</p>
+<h3>Long polling</h3>
+<p>Instead of executing <code> Meteor.call('graph')</code> just once, you can set up a timeout to call it on a regular basis. First, you can rewrite the <code>Template.main.onRendered</code> function so that it behaves exactly as it did before, with the initial call triggered once by a <code>poll()</code> command:</p>
+<pre class="revised">Template.main.onRendered(function() {
+  var container = this.find('#graph')
+  <span class="new">var options = {}
+  var network
+    , nodesDS
+    , edgesDS
+    , visData
+  
+  if (!network) {
+    // Initialize the vis.DataSets and the vis.Network objects
+    nodesDS = new vis.DataSet()
+    edgesDS = new vis.DataSet()
+    visData = { nodes: nodesDS, edges: edgesDS }</span>
+    <span class="new">network =</span> new vis.Network(container, visData, options)
+  <span class="new">}
+
+  function poll() {
+    Meteor.call('graph', graphCallback)
+  }</span>
+
+  function graphCallback(error, data) {
+    if (!error) {
+      // data should be an object with the format
+      // { nodes: &lt;array of nodes&gt;, edges: &lt;array of edges&gt; }
+      <span class="new">nodesDS.add(data.nodes)
+      edgesDS.add(data.edges)</span>
+    }
+  }
+
+  <span class="new">poll()</span>
+})</pre>
+<p>Save your changes and restart the Meteor server. Check that the Hello World graph is appearing just as it was before. Now you can make a small change that triggers the <code>Meteor.call('graph')</code> every 2 seconds</p>
+<pre class="revised">Template.main.onRendered(function() {
+  var container = this.find('#graph')
+  <span class="new">var interval = 2000 // 2 seconds between each call to poll()</span>
+  var options = {}
+  var network
+    , nodesDS
+    , edgesDS
+    , visData
+  
+  if (!network) {
+    // Initialize the vis.DataSets and the vis.Network objects
+    nodesDS = new vis.DataSet()
+    edgesDS = new vis.DataSet()
+    visData = { nodes: nodesDS, edges: edgesDS }
+    network = new vis.Network(container, visData, options)
+  }
+
+  function poll() {
+    Meteor.call('graph', graphCallback)
+    <span class="new">setTimeout(poll, interval)</span>
+  }
+
+  function graphCallback(error, data) {
+    if (!error) {
+      // data should be an object with the format
+      // { nodes: &lt;array of nodes&gt;, edges: &lt;array of edges&gt; }
+      nodesDS.add(data.nodes)
+      edgesDS.add(data.edges)
+    }
+  }
+
+  poll()
+})</pre>
+<p>However, this now causes a problem. If you look in the console of your browser, you will see that an exception is being thrown every two seconds: <code>Exception in delivering result of invoking 'graph': Error: Cannot add item: item with id 0 already exists</code>.</p>
+<p>The first time the <code>graphCallback</code> function was triggered, all the objects it received in the <code>data</code> argument were new, and the vis.DataSets were happy to add them all. Now the DataSets already contain an object representing each node, and they refuse to treat the duplicates. How can you stop the server sending the complete graph to the client on each poll?</p>
+<h3><code>timestamp</code></h3>
+<p>As you saw earlier, the solution is to give each node and each relationship an <code>updatedAt</code> property, and to change the database query so that it returns only elements that have changed since it was last polled. You can start by changing the query that ensures that the "Hello" and "World" nodes exist. You can initialize the <code>timestamp</code> variable at the same time:</p>
+<pre>...
+
+  // Ensure that the database has some usable content
+  db.query(
+    "WITH TIMESTAMP() AS timestamp " +
+    "MERGE (hello {name:'Hello'}) " +
+    "ON CREATE " +
+    "  SET hello.updatedAt = timestamp " +
+    "MERGE (world {name:'World'}) " +
+    "ON CREATE " +
+    "  SET world.updatedAt = timestamp " +
+    "MERGE hello-[link:LINK]->world " +
+    "ON CREATE " +
+    "  SET link.updatedAt = timestamp"
+  )
+ 
+  // On startup, we want all records from the database
+  var timestamp = 0 // will be updated after each query
+
+...</pre>
+<p>OK, so this query looks like overkill, but it will allow you to update and delete each part of the path separately, and still ensure that you have a complete <code>(hello)-[:LINK]->(world)</code> path each time you launch the server, without creating nodes with duplicate names.</p>
+<p>Now you can update the query that gets all the nodes and relationships from the database. Find the query in your <code>server.js</code> file and make the following change:</p>
+<pre class="revised">       ...
+       , visjsItem // object: neo4j data converted to visjs format
+
+      <span class="new">var time= db.querySync(
+        "RETURN TIMESTAMP() AS now"
+      ).fetch()[0].now
+      //console.log("Time in Neo4j database:", time)</span>
+
+      // Get the graph data from the database in Neo4j format
+      graph = db.graph(
+        <span class="new">"WITH {timestamp} AS timestamp " +
+        "MATCH (m), (n) " +
+        "WHERE n.updatedAt >= timestamp " +
+        "WITH m, n, timestamp " +
+        "OPTIONAL MATCH (m)-[r]->() " +
+        "WHERE r.updatedAt >= timestamp " +
+        "RETURN DISTINCT n, r"
+      , { timestamp: timestamp }</span>
+      ).fetch()
+      console.log(graph)
+
+      <span class="new">timestamp = time</span>
+
+      nodes = []
+      ...</pre>
+<p>Now when you restart the server, you will no longer see any errors in the browser console. In the Terminal window, you will see an output like this:</p>
+<pre>=> App running at: http://localhost:3000/
+&lt;timestamp&gt; v2.2.5
+&lt;timestamp&gt; Successfully connected to Neo4j on http://localhost:7474
+&lt;timestamp&gt; [ { relationships: [], nodes: [ [Object] ] },
+&lt;timestamp&gt;   { relationships: [ [Object] ], nodes: [ [Object], [Object] ] },
+&lt;timestamp&gt;   { relationships: [], nodes: [ [Object] ] },
+&lt;timestamp&gt;   { relationships: [ [Object] ], nodes: [ [Object], [Object] ] } ]
+&lt;timestamp&gt; []
+&lt;timestamp&gt; []
+&lt;timestamp&gt; ...
+</pre>
+<p>After the first call to get the graph, with a <code>timestamp</code> of 0, no further data is retrieved from the database, so there is no conflict about existing <code>id</code>s.</p>
+<p>In the Neo4j browser running at <a href="http://localhost:7474/">localhost:7474</a>, you can add new nodes and a new relationship:</p>
+<pre>WITH TIMESTAMP() AS timestamp
+CREATE
+(hello {name:"Hello", updatedAt:timestamp})
+-[r:LINK {updatedAt:timestamp}]->
+(kitty {name:"Kitty", updatedAt:timestamp})</pre>
+<p>Look at your Meteor project in the browser; you should see a new pair of nodes appear.</p>
+<h3>Refreshing</h3>
+<p>However, it's easy to provoke a new bug. Simply refresh your browser. Suddenly the graph is gone. This is because the server-side<code>timestamp</code> variable is set to 0 when the server is first lauched, but it needs to behave like 0 when the browser is refreshed. Fortunately the fix is simple. You need to make three changes: two in the <code>main.js</code> client-side script...</p>
+<pre class="revised">Template.main.onRendered(function() {
+  var container = this.find('#graph')
+  var interval = 2000 // 2 seconds between each call to poll()
+  var options = {}
+  var network
+    , nodesDS
+    , edgesDS
+    , visData
+  
+  if (!network) {
+    // Initialize the vis.DataSets and the vis.Network objects
+    nodesDS = new vis.DataSet()
+    edgesDS = new vis.DataSet()
+    visData = { nodes: nodesDS, edges: edgesDS }
+    network = new vis.Network(container, visData, options)
+  }
+
+  function poll(<span class="new">ignoreTimestamp</span>) {
+    Meteor.call('graph', <span class="new">ignoreTimestamp, </span>graphCallback)
+    setTimeout(poll, interval)
+  }
+
+  function graphCallback(error, data) {
+    if (!error) {
+      // data should be an object with the format
+      // { nodes: &lt;array of nodes&gt;, edges: &lt;array of edges&gt; }
+      nodesDS.add(data.nodes)
+      edgesDS.add(data.edges)
+    }
+  }
+
+  poll(<span class="new">true</span>)
+})pre>
+<p>... and two in the the <code>server.js</code> script:</p>
+<pre class="revised">Meteor.methods({
+    graph: function(<span class="new">ignoreTimestamp</span>) {
+ 
+      var graph     // result from synchronous call to db.graph()
+        , visGraph  // output return via callback to the client
+                    // format: { nodes: [...], edges: [...]}
+        , nodes     // reference to visGraph.nodes
+        , edges     // reference to visGraph.edges
+        , nodeIds   // used to track which nodes have been treated
+        , edgeIds   // used to track which edges have been treated
+        , rowCount  // number of rows in graph
+        , itemCount // number of node or edge items in current row
+        , row       // current row from graph
+        , ii        // iterator for rows
+        , jj        // iterator for nodes and edges in current row
+        , id        // id of the current node or edge
+        , items     // array of node or edge items in current row
+        , neo4jItem // object: node or edge currently being treated
+        , visjsItem // object: neo4j data converted to visjs format
+
+      var time= db.querySync(
+        "RETURN TIMESTAMP() AS now"
+      ).fetch()[0].now
+      //console.log("Time in Neo4j database:", time)
+      
+      <span class="new">if (ignoreTimestamp) {
+        timestamp = 0
+      }</span>
+
+      // Get the graph data from the database in Neo4j format
+      graph = db.graph(
+        "WITH {timestamp} AS timestamp " +
+        "MATCH (m), (n) " +
+        "WHERE n.updatedAt >= timestamp " +
+        "WITH m, n, timestamp " +
+        "OPTIONAL MATCH (m)-[r]->() " +
+        "WHERE r.updatedAt >= timestamp " +
+        "RETURN DISTINCT n, r"
+      , { timestamp: timestamp }
+      ).fetch()
+      //console.log(graph)
+
+      timestamp = time
+
+      nodes = []
+      ...</pre>
+<p>Now you can refresh your browser as much as you want, and the graph will reappear each time.</p>
+<h3>Dealing with updates</h3>
+<p>It's still easy to provoke errors. Try this query from the Neo4j browser at <a href="http://localhost:7474/">localhost:7474</a>:</p>
+<pre>WITH TIMESTAMP() AS timestamp
+MATCH (hello)
+WHERE hello.name = "Hello"
+CREATE 
+hello-[r:LINK {updatedAt:timestamp}]->
+(kitty {name:"Dolly", updatedAt:timestamp})</pre>
+<p>This takes the existing "Hello" nodes and adds a new relationship to each of them. The <code>db.graph()</code> query will include the existing nodes as part of the path created with the new relationship. Also, simply changing the <code>updatedAt</code> value for an existing node or link will cause the same problem.</p>
+<p>The client-side code needs to be more circumspect. </p>
+</section>
+
+<section>
+<h2><a id="realtime" class="anchor" href="#realtime" aria-hidden="true"><span class="octicon octicon-link"></span>Realtime changes</a></h2>
+<p>Now you are ready to allow your end-users to make changes to the graph database in their browser, and to share those changes with all other users.</p>
 </section>
 
 <h1>API</h1>
