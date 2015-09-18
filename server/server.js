@@ -3,9 +3,9 @@ Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
   var db = new Neo4jDB(
-    'http://localhost:7474'
-  , { username: 'neo4j'
-    , password: '1234'
+    'http://neo4jdriver.sb05.stations.graphenedb.com:24789'
+  , { username: 'neo4jdriver'
+    , password: 'blK3AdrAPti3UdIE18gc'
     }
   )
 
