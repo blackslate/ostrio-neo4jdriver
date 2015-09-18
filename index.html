@@ -38,8 +38,9 @@
 <li>Deleting</li>
 </ul>
 </li>
-
 <li><a href="#realtime">Realtime changes</a></li>
+<li><a href="#remove">Removing graph elements</a></li>
+
 </ul>
 <h2>API</h2>
 <ul>
@@ -709,7 +710,7 @@ console.log("Time in Neo4j database:", timestamp)</pre>
 <p>In the client, the <code>data</code> received in the callback from the <code>graph</code> method will now contain only elements that have changed recently (or nothing at all). Instead of creating a new DataSet, you will need to add, update or remove elements from a persistent DataSet, and let vis.js modify its display accordingly.</p>
 <p>For simplicity, you can start by only treating new elements. You'l see how to extend this to updated and deleted elements shortly.</p>
 <h3>Long polling</h3>
-<p>Instead of executing <code> Meteor.call('graph')</code> just once, you can set up a timeout to call it on a regular basis. First, you can rewrite the <code>Template.main.onRendered</code> function so that it behaves exactly as it did before, with the initial call triggered once by a <code>poll()</code> command:</p>
+<p>Instead of executing <code> Meteor.call('graph')</code> just once, you can set up a timeout to call it on a regular basis, using a technique known as long polling. First, you can rewrite the <code>Template.main.onRendered</code> function so that it behaves exactly as it did before, with the initial call triggered once by a <code>poll()</code> command:</p>
 <pre class="revised">Template.main.onRendered(function() {
   var container = this.find('#graph')
   <span class="new">var options = {}
@@ -880,7 +881,7 @@ CREATE
   }
 
   poll(<span class="new">true</span>)
-})pre>
+})</pre>
 <p>... and two in the the <code>server.js</code> script:</p>
 <pre class="revised">Meteor.methods({
     graph: function(<span class="new">ignoreTimestamp</span>) {
@@ -938,7 +939,95 @@ CREATE
 hello-[r:LINK {updatedAt:timestamp}]->
 (kitty {name:"Dolly", updatedAt:timestamp})</pre>
 <p>This takes the existing "Hello" nodes and adds a new relationship to each of them. The <code>db.graph()</code> query will include the existing nodes as part of the path created with the new relationship. Also, simply changing the <code>updatedAt</code> value for an existing node or link will cause the same problem.</p>
-<p>The client-side code needs to be more circumspect. </p>
+<p>The client-side code needs to be more circumspect. The vis.DataSet objects have methods that can <code>add</code>, <code>update</code> and <code>remove</code> nodes and edges. You can check use an array of <code>id</code>s to track which elements have already been added to a DataSet, and <code>update</code> these elements. Here are the changes you can make to your <code>main.js</code> script to get this to happen:</p>
+<pre class="revised">
+Template.main.onRendered(function() {
+  var container = this.find('#graph')
+  var interval = 2000 // 2 seconds between each call to poll()
+  var options = {}
+  <span class="new">var nodeIds = []
+  var edgeIds = []</span>
+  var network
+    , nodesDS
+    , edgesDS
+    , visData
+  
+  if (!network) {
+    // Initialize the vis.DataSets and the vis.Network objects
+    nodesDS = new vis.DataSet()
+    edgesDS = new vis.DataSet()
+    visData = { nodes: nodesDS, edges: edgesDS }
+    network = new vis.Network(container, visData, options)
+  }
+
+  function poll(ignoreTimestamp) {
+    Meteor.call('graph', ignoreTimestamp, graphCallback)
+    setTimeout(poll, interval)
+  }
+
+  function graphCallback(error, data) {
+    if (!error) {
+      // data should be an object with the format
+      // { nodes: <array of nodes>, edges: <array of edges> }
+      
+      <span class="new">var items
+      function identifyItems(itemArray, idArray) {
+        var ii
+          , item
+          , id
+        var addedItems = []
+          , updatedItems = []
+        var items = {
+          added: addedItems
+        , updated: updatedItems
+        }
+
+        for(ii = 0; item = itemArray[ii]; ii += 1) {
+          id = item.id
+          if (idArray.indexOf(id) &lt; 0) {
+            // This is a new item
+            addedItems.push(item)
+            idArray.push(id)
+          } else {
+            updatedItems.push(item)
+          }
+        }
+        
+        return items
+      }
+
+      items = identifyItems(data.nodes, nodeIds)</span>
+      nodesDS.add<span class="new">(items.added)
+      nodesDS.update(items.updated)
+
+      items = identifyItems(data.edges, edgeIds)</span>
+      edgesDS.add<span class="new">(items.added)
+      edgesDS.update(items.updated)</span>
+    }
+  }
+
+  poll(true)
+})</pre>
+<h3>Deleting nodes and edges</h3>
+<p>If you delete a node or an edge in the Neo4j browser running at <a href="http://localhost:7474/">localhost:7474</a>, then your application will receive no notification that it has gone. There will be nothing with a fresh <code>updatedAt</code> value to be distributed to the various clients. All the clients would continue to show the node or edge as if it still existed.</p>
+<p>The solution is to delete a graph element in two stages. In the first stage, you mark it as deleted and refresh its <code>updatedAt</code> value. The server will discover that it has been updated, and send it out to all the clients, and the clients can delete it locally.Some time later, when all the clients have got the message, the server can delete the graph element from the database.</p>
+<p>Because this extra step is necessary, it makes sense to first create an interface where the user can create, update and delete graph elements, and then deal with the deletion procedure.</p>
+<p>So it's time to move on to the editing interface.</p>
+
+</section>
+
+<section>
+<h2><a id="realtime" class="anchor" href="#realtime" aria-hidden="true"><span class="octicon octicon-link"></span>Realtime changes</a></h2>
+<p>In your own projects, you will probably want to make the editing process transparent. For example, to create a new node, the user might simply have to click somewhere and start typing. To create a link between two nodes, it might be enough to click on one and drag towards the other.</p>
+<p>For this tutorial, I will use a more formalized approach. To keep the editing interactions as simple as possible, I need to create a form where you can see the properties of each element and make changes. I am not going to provide any detailed explanations about how to get it to work since your own interface is likely to be quite different.</p>
+
+</section>
+
+<section>
+<h2><a id="remove" class="anchor" href="#remove" aria-hidden="true"><span class="octicon octicon-link"></span>Removing graph elements</a></h2>
+<p></p>
+<p class="aside note">Neo4j will not allow you to delete a node that still has a relationship that connects it to another node. However, Neo4j will happily let you set a <code>removed</code> property on any node, whether it is still connected to others or not. When the server notices that a node is flagged to be <code>removed</code>, it must first explicitly remove all the relationships before it can get Neo4j to delete the node.</p>
+<p></p>
 </section>
 
 <section>
