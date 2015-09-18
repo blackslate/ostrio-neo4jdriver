@@ -1,19 +1,34 @@
 
 Template.main.onRendered(function() {
   var container = this.find('#graph')
+  var interval = 2000 // 2 seconds between each call to poll()
+  var options = {}
+  var network
+    , nodesDS
+    , edgesDS
+    , visData
+  
+  if (!network) {
+    // Initialize the vis.DataSets and the vis.Network objects
+    nodesDS = new vis.DataSet()
+    edgesDS = new vis.DataSet()
+    visData = { nodes: nodesDS, edges: edgesDS }
+    network = new vis.Network(container, visData, options)
+  }
 
-  Meteor.call('graph', graphCallback)
+  function poll(ignoreTimestamp) {
+    Meteor.call('graph', ignoreTimestamp, graphCallback)
+    setTimeout(poll, interval)
+  }
 
   function graphCallback(error, data) {
     if (!error) {
       // data should be an object with the format
       // { nodes: <array of nodes>, edges: <array of edges> }
-      var nodesDS = new vis.DataSet(data.nodes)
-      var edgesDS = new vis.DataSet(data.edges)
-      var visData = { nodes: nodesDS, edges: edgesDS }               
-      var options = {}
-
-      new vis.Network(container, visData, options)
+      nodesDS.add(data.nodes)
+      edgesDS.add(data.edges)
     }
   }
+
+  poll(true)
 })

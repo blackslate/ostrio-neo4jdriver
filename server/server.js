@@ -1,26 +1,33 @@
-
 Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
   var db = new Neo4jDB(
-    'http://neo4jdriver.sb05.stations.graphenedb.com:24789'
-  , { username: 'neo4jdriver'
-    , password: 'blK3AdrAPti3UdIE18gc'
+    "http://localhost:7474"
+  , { username: "neo4j"
+    , password: "1234"
     }
   )
 
   // Ensure that the database has some usable content
   db.query(
-    "MERGE (hello {name:'Hello'})-[link:LINK]->(world {name:'World'})"
+    "WITH TIMESTAMP() AS timestamp " +
+    "MERGE (hello {name:'Hello'}) " +
+    "ON CREATE " +
+    "  SET hello.updatedAt = timestamp " +
+    "MERGE (world {name:'World'}) " +
+    "ON CREATE " +
+    "  SET world.updatedAt = timestamp " +
+    "MERGE hello-[link:LINK]->world " +
+    "ON CREATE " +
+    "  SET link.updatedAt = timestamp"
   )
+ 
+  // On startup, we want all records from the database
+  var timestamp = 0 // will be updated after each query
 
-  return Meteor.methods({
-    graph: function() {
-      // The call to the database is made synchronously, by not
-      // providing a callback. This means that we can treat the
-      // result immediately and return the treated data to the client
-      // caller via its callback.
-
+  Meteor.methods({
+    graph: function(ignoreTimestamp) {
+ 
       var graph     // result from synchronous call to db.graph()
         , visGraph  // output return via callback to the client
                     // format: { nodes: [...], edges: [...]}
@@ -38,73 +45,31 @@ Meteor.startup(function() {
         , neo4jItem // object: node or edge currently being treated
         , visjsItem // object: neo4j data converted to visjs format
 
+      var time= db.querySync(
+        "RETURN TIMESTAMP() AS now"
+      ).fetch()[0].now
+      //console.log("Time in Neo4j database:", time)
+      
+      if (ignoreTimestamp) {
+        timestamp = 0
+      }
+
       // Get the graph data from the database in Neo4j format
       graph = db.graph(
-        'MATCH ()-[r]-() ' +
-        'RETURN DISTINCT r'
+        "WITH {timestamp} AS timestamp " +
+        "MATCH (m), (n) " +
+        "WHERE n.updatedAt >= timestamp " +
+        "WITH m, n, timestamp " +
+        "OPTIONAL MATCH (m)-[r]->() " +
+        "WHERE r.updatedAt >= timestamp " +
+        "RETURN DISTINCT n, r"
+      , { timestamp: timestamp }
       ).fetch()
+      //console.log(graph)
 
-      // console.log("graph:", JSON.stringify(graph))
-      // Array with a format like:
-      // [ ...
-      // , { "relationships": [
-      //       { "id":"266"
-      //       , "type":"LIKES"
-      //       , "startNode":"132"
-      //       , "endNode":"133"
-      //       , "properties":{}
-      //       }
-      //     ]
-      //   , "nodes": [
-      //       { "id":"131"
-      //       , "labels":["Person"]
-      //       , "properties":{"name":"Amy"}
-      //       }
-      //     , { "id":"132"
-      //       , "labels":["Person"]
-      //       , "properties":{"name":"Bob"}
-      //       }
-      //     , { "id":"133"
-      //       ,"labels":["Person"]
-      //       ,"properties":{"name":"Cal"}
-      //       }
-      //     ]
-      //   }
-      // , ...]
-      // NOTES:
-      // 1. There may be more than 2 nodes in the "nodes" section,
-      //    but each relationship in the "relationships" section links
-      //    only the given startNode and endNode.
-      // 2. The same relationship may appear multiple times, sometimes
-      //    indentically, sometimes with a different set of nodes. We
-      //    must filter out duplicates.
+      timestamp = time
 
-      // Convert to visjs format:
-      // { nodes: [
-      //     { id:     <Neo4j id>
-      //     , labels: <Neo4j labels>
-      //     , label:  <Neo4j properties.name>
-      //     , group:  <Neo4j labels[0]>
-      //     , custom: <Neo4j properties.custom>
-      //     , ...
-      //     }
-      //   , ...
-      //   ]
-      // , edges: [
-      //     { id:     <Neo4j id>
-      //     , from:   <Neo4j startNode>
-      //     , to:     <Neo4j endNode>
-      //     , type:   <Neo4j type>
-      //     , label:  <Neo4j type
-      //     , arrows: "to"
-      //     , custom:  <Neo4j properties.custom>
-      //     , ...
-      //     }
-      //   , ...
-      //   ]
-      // }
-
-     nodes = []
+      nodes = []
       edges = []
       visGraph = {
         nodes: nodes,
@@ -132,7 +97,7 @@ Meteor.startup(function() {
             }
             visjsItem = _.extend(visjsItem, neo4jItem.properties)
             nodes.push(visjsItem)
-            nodeIds.push(id) // Don't treat it again
+            nodeIds.push(id) // Don"t treat it again
           }
         }
 
@@ -149,11 +114,11 @@ Meteor.startup(function() {
             , to: neo4jItem.endNode || neo4jItem.end
             , type: neo4jItem.type
             , label: neo4jItem.type
-            , arrows: 'to'
+            , arrows: "to"
             }
             visjsItem = _.extend(visjsItem, neo4jItem.properties)
             edges.push(visjsItem)
-            edgeIds.push(id) // Don't treat it again
+            edgeIds.push(id) // Don"t treat it again
           }
         }
       }
