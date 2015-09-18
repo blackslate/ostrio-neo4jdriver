@@ -9,46 +9,14 @@ Meteor.startup(function() {
     }
   )
 
-  ;(function ensureGraphIsPopulated(){
-    var result = db.queryOne('MATCH (n) RETURN n LIMIT 1')
-    // console.log("queryOne:",result)
-    // undefined or a mondo document { n: 
-    // { name: 'Amy',
-    //   id: 99,
-    //   labels: [ 'Person' ],
-    //   metadata: { id: 99, labels: [Object] } } }
-
-    if (!result) {
-      // The database is empty. Seed it with some random Persons who
-      // KNOWS each other.
-      result = db.querySync(
-        'WITH ["Amy","Bob","Cal"] AS names ' + // ,"Dan","Eve"]
-        'UNWIND names AS name ' +
-        'CREATE p = (:Person {name: name}) ' +
-        'WITH p ' +
-        'MATCH (p1:Person), (p2:Person) ' +
-        'WITH p1, p2 ' +
-        'WHERE rand() < 0.3 ' + // a random subset of possibilities
-        'AND p1 <> p2 ' +
-        'MERGE p1-[r:KNOWS]->p2 ' +
-        'RETURN DISTINCT p1, r, p2'
-      )
-      // console.log("querySync:",result)
-      // mongo cursor
-      // { _cursor: 
-      //   [ { p1: [Object], r: [Object], p2: [Object] },
-      //     ...
-      //     { p1: [Object], r: [Object], p2: [Object] } ],
-      //   length: 12,
-      //   _current: 0,
-      //   hasNext: true,
-      //   hasPrevious: false }
-    }
-  })()
+  // Ensure that the database has some usable content
+  db.query(
+    "MERGE (hello {name:'Hello'})-[link:LINK]->(world {name:'World'})"
+  )
 
   return Meteor.methods({
     graph: function() {
-      // The calls to the datbase is made synchronously, by not
+      // The call to the database is made synchronously, by not
       // providing a callback. This means that we can treat the
       // result immediately and return the treated data to the client
       // caller via its callback.
@@ -72,9 +40,8 @@ Meteor.startup(function() {
 
       // Get the graph data from the database in Neo4j format
       graph = db.graph(
-        'MATCH (n) ' +
-        'OPTIONAL MATCH ()-[r]-() ' +
-        'RETURN DISTINCT n, r'
+        'MATCH ()-[r]-() ' +
+        'RETURN DISTINCT r'
       ).fetch()
 
       // console.log("graph:", JSON.stringify(graph))
