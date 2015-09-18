@@ -1,8 +1,8 @@
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Ostrio-neo4jdriver</title>
-  <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!--script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script-->
 </head>
 
 <body>
@@ -25,8 +25,9 @@
 <h2>Getting started</h2>
 <ul>
 <li><a href="#connection">Connecting to Neo4j</a></li>
-<li><a href="#call">Calling from the client</a></li>
-<li><a href="#alchemy">Working with Alchemy</a></li>
+<li><a href="#call">Calling from the browser</a></li>
+<li><a href="#visjs">Hello World with vis.js</a></li>
+<li><a href="#online">Getting your graph online</a></li>
 <li></li>
 </ul>
 <h2>API</h2>
@@ -52,9 +53,9 @@
 <a href="https://github.com/blackslate/ostrio-neo4jdriver" class="btn">View on GitHub</a>
 <a href="https://github.com/blackslate/ostrio-neo4jdriver/zipball/master" class="btn">Download .zip</a>
 <a href="https://github.com/blackslate/ostrio-neo4jdriver/tarball/master" class="btn">Download .tar.gz</a>
-</header></p>
+</header>
 
-<p><article>
+<article>
 <section id="top">
 <p>Imagine a web page that needs to display the relationships between people or things. For example:</p>
 <table>
@@ -70,11 +71,11 @@
     </td>
     <td width="70%">
     <figure>
-<img src="img/social-network.png" alt="social network graph" /></p>
+<img src="img/social-network.png" alt="social network graph" />
 
 <!-- img src="img/ER_Diagram.png" alt="entity-relationship model" / -->
 
-<p><figcaption>Figure 1. Relationships shown as graphs</figcaption>
+<figcaption>Figure 1. Relationships shown as graphs</figcaption>
 </figure>
     </td>
   </tr>
@@ -100,7 +101,7 @@ logo: http://www.wikiartis.com/media/images/licenses/By-sa.png
 
 <p>A graph database can help you to visualize the multiple nodes and the links between them, and the <a href="https://github.com/blackslate/ostrio-neo4jdriver">Meteor.js Neo4j Driver</a> can provide a crucial connection between your graph database and the web page.</p>
 
-<p>Your data processing chain might look something like this:
+<p>Your data processing chain might look something like this:</p>
  
  <figure>
 <img src="img/data-user.png" alt="data processing chain" />
@@ -109,7 +110,7 @@ logo: http://www.wikiartis.com/media/images/licenses/By-sa.png
 
 <p>The Meteor.js Neo4j Driver allows you to connect to a <a href="http://neo4j.com/developer/graph-database/">Neo4j graph database</a> from a <a href="https://www.meteor.com/features">Meteor</a> application. This driver runs only on the server. Internally, it uses the <a href="http://neo4j.com/docs/stable/rest-api.html">Neo4j REST API</a> to interact with a Neo4j database, either on the server itself or on a remote host, such as <a href="http://www.graphenedb.com/docs">GrapheneDB</a>.</p>
 
-<p>In itself, the server-side Neo4j Driver provides no reactivity in the browser. To create a web page that connects to a Neo4j database and updates reactively as the data changes, you should use the <a href="https://github.com/VeliovGroup/ostrio-Neo4jreactivity">Isomorphic Reactive Driver</a>. The Isomorphic Reactive Driver adds a reactive layer to the service provided by the Neo4j Driver. You can use <a href="http://graphalchemist.github.io/Alchemy/#/">Alchemy.js</a> to create dynamic representations of your graph in the browser.</p>
+<p>In itself, the server-side Neo4j Driver provides no reactivity in the browser. To create a web page that connects to a Neo4j database and updates reactively as the data changes, you should use the <a href="https://github.com/VeliovGroup/ostrio-Neo4jreactivity">Isomorphic Reactive Driver</a>. The Isomorphic Reactive Driver adds a reactive layer to the service provided by the Neo4j Driver. You can use <a href="http://visjs.org/#download_install">vis.js</a> to create dynamic representations of your graph in the browser.</p>
 
 <p>This page can help you understand how to use the Meteor.js Neo4j Driver on the server as part of a Metor project.</p>
 
@@ -119,10 +120,11 @@ logo: http://www.wikiartis.com/media/images/licenses/By-sa.png
 <li>This package has been tested and works like a charm with <a href="http://www.graphenedb.com/docs">GrapheneDB</a>.</li>
 <li>Please see the demo hosted on <a href="/">Meteor (powered by GrapheneDB)</a> and on <a href="/">Heroku</a>.</li>
 <li>To learn more about using Cypher, you can start with the <a href="http://neo4j.com/docs/2.2.5/cypher-refcard/">Neo4j cheat sheet</a>.
-</section></li>
+</li>
 </ul>
+</section>
 
-<p><section>
+<section>
 <h2><a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
 The Meteor.js Neo4j Driver requires the following applications and modules to be installed. Follow the links for each dependency for detailed installation instructions.</p>
 
@@ -136,10 +138,11 @@ The Meteor.js Neo4j Driver requires the following applications and modules to be
 <ul>
 <li><a href="https://java.com/en/download/">Java Runtime Environment 1.7 or later</a></li>
 <li><a href="http://neo4j.com/download/">Neo4j</a>
-</section></li>
+</li>
 </ul>
+</section>
 
-<p><section>
+<section>
 <h2><a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installating the driver</h2>
 <p>Create a new Meteor project, if you don't already have one to work on:</p>
 <pre class="prettyprint"><code class="language-none">$meteor create MyProject</code></pre>
@@ -147,39 +150,39 @@ The Meteor.js Neo4j Driver requires the following applications and modules to be
 <pre class="prettyprint"><code class="language-none">$ cd MyProject
 $ meteor add ostrio:neo4jdriver</code></pre>
 <p>You might like to do a quick smoke test, to check that the driver is correctly installed. The first two commands below create a minimalist JavaScript file which will run on the server as soon as the Meteor environment is ready. The third command launches meteor.</p>
-<pre class="prettyprint"><code class="language-none">$ mkdir -p server/lib/
-$ cat > server/lib/Neo4jDriver.js &lt;&lt; EOF
-'console.log("Meteor.startup: Neo4jDB is a", typeof Neo4jDB)'
+<pre class="prettyprint"><code class="language-none">$ mkdir -p server/
+$ cat > server/server.js &lt;&lt; EOF
+console.log("Meteor.startup: Neo4jDB is a", typeof Neo4jDB)
 EOF
 $ meteor</code></pre>
 <p>Check in the Terminal window for output that looks like this:</p>
 <pre class="prettyprint">=> App running at: http://localhost:3000/
-<timestamp>Meteor.startup: Neo4jDB is a function</pre>
+&lt;timestamp&gt;Meteor.startup: Neo4jDB is a function</pre>
 <p>If the last word is "function" then all is well.</p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="connection" class="anchor" href="#connection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Connecting to Neo4j</h2>
-<p>On the server, you want to create a connection to the Neo4j database before any other scripts are loaded. To do this, create a JavaScript file called <code>Neo4jDriver.js</code> at <code><em>MyProject</em>/server/lib/</code> with the following contents. You may need to use your own URL, username and password credentials, as shown in <em>italics</em>.</p>
+<p>On the server, you want to create a connection to the Neo4j database before any other scripts are loaded. To do this, create or edit the JavaScript file called <code>server.js</code> at <code><em>MyProject</em>/server/</code> so that it has the following contents. You may need to use your own URL, username and password credentials, as shown in <em>italics</em>.</p>
 
 <pre class="prettyprint">
 // Essential: connect to Neo4j server
 db = new Neo4jDB(
-// Essential: connect to Neo4j server
-db = new Neo4jDB(
   "<em>http://localhost:7474</em>"
-, { username: "<em>neo4j</em>", password: "<em>1234</em>"}
+, { username: "<em>neo4j</em>"
+  , password: "<em>1234</em>"
+  }
 )
 
 // Optional: check that the database is accessible
 cursor = db.query(
-  "CREATE " +
-  "(hello {name:'Hello'})-[link:LINK]-&gt;(world {props}) " +
-  "RETURN hello, link, world"
-, { props: { name: 'World' } })
+  "MERGE " +
+  "(hello {name:'Hello'})-[link:LINK]->(world {name:'World'}) " +
+  "RETURN hello, link, world"))
 console.log(cursor.fetch())
 </pre>
 
-<p>Here's output similar to what you might see in the Terminal window, if all goes well:</p>
+<p>I've used <code>MERGE</code> rather than <code>CREATE</code> so that the 'Hello' and 'World' nodes are not created more than once. Here's output similar to what you might see in the Terminal window, if all goes well. (I've made it look pretty.)</p>
 
 <pre class="prettyprint">v2.2.5
 Successfully connected to Neo4j on http://localhost:7474
@@ -201,21 +204,427 @@ Successfully connected to Neo4j on http://localhost:7474
        name: 'World',
        id: 42,
        labels: [],
-       metadata: [Object] } } ]</pre>
+       metadata: [Object] }
+  }
+]</pre>
+<p>This shows that you can make a synchronous connection to the Neo4j database from the server. The next step is to send the data to all connected clients.</p>
+</section>
 
-<p></section></p>
+<section>
+<h2><a id="call" class="anchor" href="#call" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calling the Neo4j database from the browser</h2>
+<p>You can use a standard <code>Meteor.call()</code> method to pull data from the server into the browser client. It's time to delete the default files that Meteor created for you automatically, and to replace them with your own files.</p>
+<p>On your desktop, delete <code><em>MyProject</em>.html</code>, <code><em>MyProject</em>.css</code> and <code><em>MyProject</em>.js</code>. Create a new folder called <code>client</code>, and create a <code>body.html</code> file inside it.</p>
+<pre>$ rm <em>MyProject</em>.{css,html,js}
+$ mkdir -p client &amp;&amp; touch client/body.html</pre>
+<h3>Creating a Meteor template</h3>
+<p>Here's the content you can use for <code>body.html</code>:</p>
+<pre>&lt;body&gt;
+  {{&gt; main}}
+&lt;/body&gt;</pre>
+<p>Now create a <code>templates</code> folder, and <code>main.html</code> and <code>main.js</code> files to define the main template:</p>
+<pre>$ mkdir -p client/templates
+$ touch client/templates/main.html
+$ touch client/templates/main.js</pre>
+<p>Here's the contents of the <code>main.html</code> file:</p>
+<pre>
+&lt;template name="main"&gt;
+  &lt;div id="graph"&gt;&lt;/div&gt;
+&lt;/template&gt;</pre>
+<p>On the client, you can start by creating a very simple JavaScript template to display a message retrieved from the server.</p>
+<pre>Template.main.onRendered(function() {
+  var container = this.find('#graph')
 
-<p><section>
-<h2><a id="call" class="anchor" href="#call" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calling the Neo4j database from the client</h2>
-<p>Content</p>
-</section></p>
+  Meteor.call('graph', graphCallback)
 
-<p><section>
-<h2><a id="alchemy" class="anchor" href="#alchemy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Working with Alchemy</h2>
-<p></p>
-</section></p>
+  function graphCallback(error, data) {
+    if (!error) {
+      // Data should be the string "Hello world"
+      container.innerHTML = data
+    }
+  }
+})</pre>
+<p>Here's what your project should look like on the desktop:</p>
+<figure>
+<img src="img/desktop.png" alt="Folder hierarchy" />
+<figcaption>Figure 3. Folder hierarchy</figcaption>
+</figure>
+<h3>Server-side data manipulation</h3>
+<p>On the server, there is more to do. Eventually, you are going to be showing a dynamic representation of your graph data in a <code>&lt;canvas&gt;</code> element, so it makes sense to retrieve the data you will be displaying in "graph" format.</p>
+<p>At the time of writing, there is no package for Meteor that allows you to create a representation of your graph in the browser using the native Neo4j data format. You will need to modify the format before you can display it. For now, it's good to take a look at the incoming Neo4j data format, and simply create a string to display in the browser. In the next section, you will see how to change it to a format that <a href="http://visjs.org/network_examples.html">vis.js</a> can use.</p>
+<h3>db.graph()</h3>
+<p>You can use <code>db.graph(query[, options][, callback])</code> to request from the server a set of nodes and relationships that can be used to generate a visual representation of the graphic. The result will be returned as a <a href="https://docs.mongodb.org/manual/core/cursors/">MongoDB cursor</a>.</p>
+<p>If you provide a callback method, then the call to the Neo4j database will be made asynchronously. For now, you can keep it simple by making a synchronous call, which means that the result will be available to the very next line of code. This means that you can use <code>db.graph(...).fetch()</code> to convert the incoming cursor
+<p>Here's a simple Cypher query that will return all the relationships in your Neo4j database, along with the data for the start and end points of each relationship:</p>
+<pre>MATCH ()-[r]-() RETURN DISTINCT r</pre>
+<p>You can modify your <code>server.js</code> script to include a <code>Meteor.methods</code> function that sends out this query:</p>
+<pre class="revised">
+var db = new Neo4jDB(
+  'http://localhost:7474'
+, { username: 'neo4j'
+  , password: '1234'
+  }
+)
 
-<p><section>
+db.query(
+  "MERGE " +
+  "(hello {name:'Hello'})-[link:LINK]->(world {name:'World'}) " +
+  "RETURN hello, link, world")
+<span class="new">//</span> console.log(cursor.fetch())
+
+<span class="new">Meteor.methods({
+  graph: function() {
+    var graph
+
+    // Make a synchronous call to the Neo4j database
+    graph = db.graph(
+      <span class="red">"MATCH ()-[r]-() RETURN DISTINCT r"</span>
+    ).fetch()
+
+    console.log("graph:", JSON.stringify(graph))
+  }
+})</span></pre>
+<p>Save your changes and wait for the Meteor server to restart. When the browser refreshes, you should see "undefined" appear as the result of the call to the <code>graph</code> method. In the Terminal window, you should see the output of the <code>console.log</code>. It should look something like this (I've prettified it to make it easier to read):</p>
+<pre>=> Meteor server restarted
+&lt;timestamp&gt; graph:
+[ { "relationships" :[
+      { "id": "287"
+      , "type": "LINK"
+      , "startNode": "158"
+      , "endNode": "159"
+      , "properties":{}
+      }
+    ]
+  , "nodes": [
+      { "id": "158"
+      , "labels":[]
+      , "properties":{"name":"Hello"}
+      }
+    , { "id": "159"
+      , "labels": []
+      , "properties": {"name":"World"}
+      }
+    ]
+} ]</pre>
+<p>To get the Hello World message back to the browser, you can modify the <code>graph</code> method like this:</p>
+<pre class="revised">Meteor.methods({
+  graph: function() {
+    var graph<span class="new">, row, edge, startId, endId, nodes, nodeNames, output</span>
+
+    // Make a synchronous call to the Neo4j database
+    graph = db.graph(
+      "MATCH ()-[r]-() RETURN DISTINCT r"
+    ).fetch()
+
+    <span class="new">//</span> console.log("graph:", JSON.stringify(graph))
+    <span class="new">// Get the first row of the graph and find the start and end
+    // of the first relationship
+    row = graph[0]
+
+    edge = row.relationships[0]
+    startId = edge.startNode || edge.start
+    endId = edge.endNode || edge.endNode
+
+    // Get the names of all the nodes in this row
+    nodes = row.nodes
+    nodeNames = {}
+    for (var ii = 0, node; node = nodes[ii]; ii += 1 ) {
+      nodeNames[node.id] = node.properties.name
+    }
+
+    // Create a string from the names of the start and end nodes
+    output = nodeNames[startId] + " " + nodeNames[endId]
+
+    return output
+  }
+})</span></pre>
+<p>This time when the server restarts and the browser refreshes, you should see the words "Hello World" in the browser window.</p>
+<p>For reference, here is the full listing of this simple format converter that runs on the server. I've tidied up the code a bit and wrapped it inside a <code>Meteor.startup</code> function. You can replace the current contents of your <code>server/server.js</code> file with this:</p>
+<pre>
+Meteor.startup(function() {
+  // Create the connection to the (remote) database. You may need to
+  // edit the URL, username and password
+  var db = new Neo4jDB(
+    'http://localhost:7474'
+  , { username: 'neo4j'
+    , password: '1234'
+    }
+  )
+ 
+  // Ensure that the database has some usable content
+  db.query(
+    "MERGE (hello {name:'Hello'})-[link:LINK]->(world {name:'World'})"
+  )
+
+  Meteor.methods({
+    graph: function() {
+      var graph
+        , row
+        , edge
+        , startId
+        , endId
+        , nodes
+        , nodeNames
+        , output
+
+      // Make a synchronous call to the Neo4j database
+      graph = db.graph(
+        "MATCH ()-[r]-() RETURN DISTINCT r"
+      ).fetch()
+
+      // console.log("graph:", JSON.stringify(graph))
+      // Array with a format like:
+      // [ { "relationships" : [
+      //       { "id":"287"
+      //       , "type":"LINK"
+      //       , "startNode":"158"
+      //       , "endNode":"159"
+      //       , "properties":{}
+      //       }
+      //     ]
+      //   , "nodes": [
+      //       { "id":"158"
+      //       , "labels":[]
+      //       , "properties":{"name":"Hello"}
+      //       }
+      //     , { "id":"159"
+      //       , "labels":[]
+      //       , "properties":{"name":"World"}
+      //       }
+      //     ]
+      // } ]
+      
+      // Get the first row of the graph and find the start and end
+      // of the first relationship
+      row = graph[0]
+
+      edge = row.relationships[0]
+      startId = edge.startNode || edge.start
+      endId = edge.endNode || edge.endNode
+
+      // Get the names of all the nodes in this row
+      nodes = row.nodes
+      nodeNames = {}
+      for (var ii = 0, node; node = nodes[ii]; ii += 1 ) {
+        nodeNames[node.id] = node.properties.name
+      }
+
+      // Create a string from the names of the start and end nodes
+      output = nodeNames[startId] + " " + nodeNames[endId]
+
+      return output
+    }
+  })
+})</pre>
+</section>
+
+<section>
+<h2><a id="visjs" class="anchor" href="#visjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hello World with vis.js</h2>
+<p>Impressive as this Hello World is, you really want to see your Neo4j graph data represented as a graph. I'll show you now how to use
+<a href="http://visjs.org/showcase/index.html">vis.js</a> to do this.</p>
+<p>Installing vis.js in your project could hardly be simpler. In your <code>client</code> folder, you can create a file named <code>head.html</code> with the following contents:</p>
+<pre>&lt;head&gt;
+  &lt;title&gt;Neo4j Demo&lt;/title&gt;
+  &lt;script 
+  src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.8.1/vis.min.js"&gt;
+  &lt;/script&gt;
+  &lt;link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.8.1/vis.min.css"&gt;
+&lt;/head&gt;</pre>
+<h3>Updating the <code>main</code> template in the client</h3>
+<p>To get vis.js to display an interactive graph, you need to create a new <a href="http://visjs.org/docs/network/"><code>vis.Network</code> object</a>. A <code>vis.Network</code> object expects 3 items of information:</p>
+<ul>
+<li>An HTML &lt;div&gt; element inside which vis will create a &lt;canvas&gt; element, where the graph will be displayed</li>
+<li>An object with the format { nodes: &lt;DataSet&gt;, edges: &lt;/DataSet&gt; }. You'll see what a DataSet is in a moment.</li>
+<li>An <code>options</code> object, to define the style of the graph. For simplicity, now, you can simply use <code>{}</code> and let vis take care of the default values.</li>
+</ul>
+<p>To create <a href="http://visjs.org/docs/data/dataset.html"><code>vis.DataSet</code></a>, you need to call <code>new vis.DataSet(dataArray)</code>. In a moment, you'll see how to create both the nodes dataArray and the edges data array, in the <code>server.js</code> script.</p>
+<p>Here are the changes that you need to make to your client-side <code>main.js</code> file, in order to create an interactive graph.</p>
+<pre class="revised">
+Template.main.onRendered(function() {
+  var container = this.find('#graph')
+
+  Meteor.call('graph', graphCallback)
+
+  function graphCallback(error, data) {
+    if (!error) {
+      <span class="new">// data should be an object with the format
+      // { nodes: &lt;array of nodes&gt;, edges: &lt;array of edges&gt; }
+      var nodesDS = new vis.DataSet(data.nodes)
+      var edgesDS = new vis.DataSet(data.edges)
+      var visData = { nodes: nodesDS, edges: edgesDS }               
+      var options = {}
+
+      new vis.Network(container, visData, options)</span>
+    }
+  }
+})</pre>
+<h3>Preparing the DataSets on the server</h3>
+<p>Now it's time to modify your <code>server.js</code> script so that it converts the incoming Neo4j data into the format that vis.js expects. The tables below compare the two formats.</p>
+<h4>Nodes</h4>
+<table>
+  <tr>
+    <th style="width:10em;text-align:left;">Neo4j format</th>
+    <th style="width:10em;text-align:left;">vis.js format</th>
+  </tr>
+  <tr>
+    <td>id</td>
+    <td>id</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td>labels</td>
+  </tr>
+  <tr>
+    <td>properties.name</td>
+    <td>label</td>
+  </tr>
+  <tr>
+    <td>labels[0]</td>
+    <td>group</td>
+  </tr>
+  <tr>
+    <td>customProperty</td>
+    <td>customProperty</td>
+  </tr>
+</table>
+<h4>Edges</h4>
+<table>
+  <tr>
+    <th style="width:10em;text-align:left;">Neo4j format</th>
+    <th style="width:10em;text-align:left;">vis.js format</th>
+  </tr>
+  <tr>
+    <td>id</td>
+    <td>id</td>
+  </tr>
+  <tr>
+    <td>start || startNode</td>
+    <td>from</td>
+  </tr>
+    <td>end || endNode</td>
+    <td>to</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>type</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>label</td>
+  </tr>
+    <td></td>
+    <td>arrows: "to"</td>
+  </tr>
+  <tr>
+    <td>customProperty</td>
+    <td>customProperty</td>
+  </tr>
+</table>
+<p>The code below performs this conversion. It is rather lengthy but it is fairly straightforward.</p>
+<pre class="revised">  Meteor.methods({
+    graph: function() {
+ 
+      var graph     <span class="new">// result from synchronous call to db.graph()
+        , visGraph  // output return via callback to the client
+                    // format: { nodes: [...], edges: [...]}
+        , nodes     // reference to visGraph.nodes
+        , edges     // reference to visGraph.edges
+        , nodeIds   // used to track which nodes have been treated
+        , edgeIds   // used to track which edges have been treated
+        , rowCount  // number of rows in graph
+        , itemCount // number of node or edge items in current row
+        , row       // current row from graph
+        , ii        // iterator for rows
+        , jj        // iterator for nodes and edges in current row
+        , id        // id of the current node or edge
+        , items     // array of node or edge items in current row
+        , neo4jItem // object: node or edge currently being treated
+        , visjsItem // object: neo4j data converted to visjs format</span>
+
+      // Get the graph data from the database in Neo4j format
+      graph = db.graph(
+        'MATCH (n) ' +
+        'OPTIONAL MATCH ()-[r]-() ' +
+        'RETURN DISTINCT n, r'
+      ).fetch()
+
+     <span class="new">nodes = []
+      edges = []
+      visGraph = {
+        nodes: nodes,
+        edges: edges
+      }
+      // helper arrays to hold ids of treated items
+      nodeIds = []
+      edgeIds = []
+
+      for (ii = 0, rowCount = graph.length; ii &lt; rowCount; ii += 1) {
+        row = graph[ii]
+
+        items = row.nodes
+        itemCount = items.length         
+        for (jj = 0; jj &lt; itemCount; jj += 1) {
+          neo4jItem = items[jj]
+          id = neo4jItem.id
+          if (nodeIds.indexOf(id) &lt; 0) {
+            // This node has not been treated yet. Remember it.
+            visjsItem = {
+              id: id
+            , labels: neo4jItem.labels
+            , label: neo4jItem.properties.name
+            , group: neo4jItem.labels[0]
+            }
+            visjsItem = _.extend(visjsItem, neo4jItem.properties)
+            nodes.push(visjsItem)
+            nodeIds.push(id) // Don't treat it again
+          }
+        }
+
+        items = row.relationships
+        itemCount = items.length          
+        for (jj = 0; jj &lt; itemCount; jj += 1) {
+          neo4jItem = items[jj]
+          id = neo4jItem.id
+          if (edgeIds.indexOf(id) &lt; 0) {
+            // This edge has not been treated yet. Remember it.
+            visjsItem = {
+              id: id
+            , from: neo4jItem.startNode || neo4jItem.start
+            , to: neo4jItem.endNode || neo4jItem.end
+            , type: neo4jItem.type
+            , label: neo4jItem.type
+            , arrows: 'to'
+            }
+            visjsItem = _.extend(visjsItem, neo4jItem.properties)
+            edges.push(visjsItem)
+            edgeIds.push(id) // Don't treat it again
+          }
+        }
+      }
+
+      return visGraph</span>
+    }
+  })</pre>
+<p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may appear in multiple times too, but only one reference is needed.</p>
+<p>When you have read through the code and understand what it is doing, you can copy and paste into your <code>server.js</code> script, to replace the current <code>Meteor.methods</code> method. When you save, Meteor will restart and the browser will refresh. If all goes well, this is what you should see in your browser:</p>
+<figure>
+<img src="img/hello_world.png" alt="Hello World as a graph" />
+<figcaption>Figure 4. Hello World as a graph</figcaption>
+</figure>
+<p>Click on either of the nodes and drag it around. Click on the background and drag. Use your mouse wheel to zoom in and out. vis.js is doing all this for you, so you can focus on managing the data.</p>
+</section>
+
+<section>
+<h2><a id="online" class="anchor" href="#online" aria-hidden="true"><span class="octicon octicon-link"></span><code>Getting your graph online</code></a></h2>
+<p>Right now, your graph is interactive, but it is not dynamic. You can't make changes to the graph in your browser, and if data in the database changes, your view will not update. You can discover how to deal with this in the next section.</p>
+<p>Before you do that, though, it's good to deploy your database to an online site, so that you can check that everything works from development to production.</p>
+
+</section>
+
+<h1>API</h1>
+<section>
 <h2><a id="Neo4jDB" class="anchor" href="#Neo4jDB" aria-hidden="true"><span class="octicon octicon-link"></span><code>Neo4jDB([url], [auth])</code></a></h2>
  - <code>url</code> {<em>String</em>} - Absolute URL to Neo4j server, support both <code>http://</code> and <code>https://</code> protocols
  - <code>auth</code> {<em>Object</em>} - User credentials
@@ -228,38 +637,38 @@ db = new Neo4jDB ';http://localhost:7474';
   username: ';neo4j';
   password: ';1234';
 </code>
-</section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="propertyKeys" class="anchor" href="#propertyKeys" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.propertyKeys()</code></a></h2>
 List all property keys ever used in the database. <a href="http://neo4j.com/docs/2.2.5/rest-api-property-values.html">Read more</a>.</p>
 
-<p>Returns an array of strings
-</section></p>
+<p>Returns an array of strings</p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="labels" class="anchor" href="#labels" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.labels()</code></a></h2>
 List all labels ever used in the database. <a href="http://neo4j.com/docs/2.2.5/rest-api-node-labels.html#rest-api-list-all-labels">Read more</a>.</p>
 
-<p>Returns an array of strings
-</section></p>
+<p>Returns an array of strings</p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="relationshipTypes" class="anchor" href="#relationshipTypes" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.relationshipTypes()</code></a></h2>
 List all relationship types ever used in the database. <a href="http://neo4j.com/docs/2.2.5/rest-api-relationship-types.html">Read more</a>.</p>
 
-<p>Returns an array of strings
-</section></p>
+<p>Returns an array of strings</p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="version" class="anchor" href="#version" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.version()</code></a></h2></p>
 
 <p>Return version of Neo4j server driver connected to.</p>
 
-<p>Returns string, like <code>2.2.5</code>
-</section></p>
+<p>Returns string, like <code>2.2.5</code></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="query" class="anchor" href="#query" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.query(cypher, [opts], [callback])</code></a></h2>
 Send query to Neo4j via transactional endpoint. This Transaction will be immediately committed. This transaction will be sent inside batch, so if you call multiple async queries, all of them will be sent in one batch in closest (next) event loop. <a href="http://neo4j.com/docs/2.2.5/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request">Read more</a>.
  - <code>cypher</code> {<em>String</em>} - Cypher query string
@@ -267,13 +676,13 @@ Send query to Neo4j via transactional endpoint. This Transaction will be immedia
  - <code>callback</code> {<em>Function</em>} - Callback with <code>error</code> and <code>result</code> arguments
  - Returns {<em>Neo4jCursor</em>}</p>
 
-<p>If <code>callback</code> is passed, the method runs asynchronously, instead of synchronously.
+<p>If <code>callback</code> is passed, the method runs asynchronously, instead of synchronously.</p>
 <code>coffeescript
 db.query "CREATE (n {userData}) RETURN n", userData: username: ';John Black';
 </code>
-</section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="queryOne" class="anchor" href="#queryOne" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.queryOne(cypher, [opts])</code></a></h2>
 Returns first result received from Neo4j
  - <code>cypher</code> {<em>String</em>} - Cypher query string
@@ -293,15 +702,16 @@ Returns first result received from Neo4j
 #   }
 # }</code></pre>
 
-<p></section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="querySync" class="anchor" href="#querySync" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.querySync(cypher, [opts])</code></a></h2></p>
 
-<p>Runs alway synchronously
+<p>Runs alway synchronously</p>
+<pre>
  - <code>cypher</code> {<em>String</em>} - Cypher query string
  - <code>opts</code> {<em>Object</em>} - JSON-able map of cypher query parameters
- - Returns {<em>Neo4jCursor</em>}</p>
+ - Returns {<em>Neo4jCursor</em>}</pre>
 
 <pre class="prettyprint"><code class="language-coffeescript">cursor = db.querySync "CREATE (n {userData}) RETURN n", userData: username: ';John Black';
 console.log cursor.fetch()
@@ -317,16 +727,17 @@ console.log cursor.fetch()
 #   }
 # }]</code></pre>
 
-<p></section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="queryAsync" class="anchor" href="#queryAsync" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.queryAsync(cypher, [opts], [callback])</code></a></h2></p>
 
-<p>Runs alway asynchronously, even if callback is not passed
+<p>Runs alway asynchronously, even if callback is not passed</p>
+<pre>
  - <code>cypher</code> {<em>String</em>} - Cypher query string
  - <code>opts</code> {<em>Object</em>} - JSON-able map of cypher query parameters
  - <code>callback</code> {<em>Function</em>} - Callback with <code>error</code> and <code>result</code> arguments
- - Returns {<em>Neo4jCursor</em>}</p>
+ - Returns {<em>Neo4jCursor</em>}</pre>
 
 <pre class="prettyprint"><code class="language-coffeescript">cursor = db.querySync "CREATE (n {userData}) RETURN n", userData: username: ';John Black';
 console.log cursor.fetch()
@@ -342,9 +753,9 @@ console.log cursor.fetch()
 #   }
 # }]</code></pre>
 
-<p></section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="graph" class="anchor" href="#graph" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.graph(cypher, [opts], [callback])</code></a></h2>
 Send query via to Transactional endpoint and return results as graph representation. <a href="http://neo4j.com/docs/2.2.5/rest-api-transactional.html#rest-api-return-results-in-graph-format">Read more</a>.
  - <code>cypher</code> {<em>String</em>} - Cypher query string
@@ -365,16 +776,18 @@ console.log cursor.fetch()
 #  {nodes: [{...}, {...}, {...}], relationships: [{...}, {...}, {...}]},
 #  {nodes: [{...}, {...}, {...}], relationships: [{...}, {...}, {...}]}]</code></pre>
 
-<p></section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="cypher" class="anchor" href="#cypher" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.cypher(cypher, [opts], [callback])</code></a></h2></p>
 
-<p>Send query to Neo4j via cypher endpoint. <a href="http://neo4j.com/docs/2.2.5/rest-api-cypher.html">Read more</a>.
+<p>Send query to Neo4j via cypher endpoint. <a href="http://neo4j.com/docs/2.2.5/rest-api-cypher.html">Read more</a>.</p>
+<pre>
  - <code>cypher</code> {<em>String</em>} - Cypher query string
  - <code>opts</code> {<em>Object</em>} - JSON-able map of cypher query parameters
  - <code>callback</code> {<em>Function</em>} - Callback with <code>error</code> and <code>result</code> arguments
- - Returns {<em>Neo4jCursor</em>}</p>
+ - Returns {<em>Neo4jCursor</em>}
+ </pre>
 
 <pre class="prettyprint"><code class="language-coffeescript">cursor = db.cypher "CREATE (n {userData}) RETURN n", userData: username: ';John Black';
 console.log cursor.fetch()
@@ -390,12 +803,13 @@ console.log cursor.fetch()
 #   }
 # }]</code></pre>
 
-<p></section></p>
+</section>
 
-<p><section>
+<section>
 <h2><a id="batch" class="anchor" href="#batch" aria-hidden="true"><span class="octicon octicon-link"></span><code>db.batch(tasks, [callback], [reactive], [plain])</code></a></h2></p>
 
-<p>Sent tasks to batch endpoint, this method allows to work directly with Neo4j REST API. <a href="http://neo4j.com/docs/2.2.5/rest-api-batch-ops.html">Read more</a>.
+<p>Sent tasks to batch endpoint, this method allows to work directly with Neo4j REST API. <a href="http://neo4j.com/docs/2.2.5/rest-api-batch-ops.html">Read more</a>.</p>
+<pre>
   - <code>tasks</code> {<em>[Object]</em>} - Array of tasks
   - <code>tasks.$.method</code> {<em>String</em>} - HTTP(S) method used sending this task, one of: ';POST';, ';GET';, ';PUT';, ';DELETE';, ';HEAD';
   - <code>tasks.$.to</code> {<em>String</em>} - Endpoint (URL) for task
@@ -404,8 +818,8 @@ console.log cursor.fetch()
   - <code>callback</code> {<em>Function</em>} - callback function, if present <code>batch()</code> method will be called asynchronously
   - <code>reactive</code> {<em>Boolean</em>} - if <code>true</code> and if <code>plain</code> is true data of node(s) will be updated before returning
   - <code>plain</code> {<em>Boolean</em>} - if <code>true</code>, results will be returned as simple objects instead of <code>Neo4jCursor</code>
-  - Returns array of {<em>[Neo4jCursor]</em>}s or array of Object id <code>plain</code> is <code>true</code></p>
-
+  - Returns array of {<em>[Neo4jCursor]</em>}s or array of Object id <code>plain</code> is <code>true</code>
+</pre>
 <pre class="prettyprint"><code class="language-coffeescript">batch = db.batch [
   method: "POST"
   to: ';/cypher';
@@ -427,5 +841,7 @@ for cursor in batch
     cursor.fetch()
 </code></pre>
 </section>
+</article>
+</main>
 </body>
 </html>
