@@ -8,3 +8,4 @@ meteor-platform
 autopublish
 insecure
 ostrio:neo4jdriver
+reactive-var

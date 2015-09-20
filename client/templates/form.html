@@ -1,0 +1,164 @@
+<template name="form">
+  <div id="form">
+    {{> startNode}}
+    {{> connect}}
+    {{> endNode}}
+  </div>
+</template>
+
+<template name="startNode">
+  <table class="{{class}}">
+    <tr>
+      {{#if selected}}
+        <th colspan="2" style="text-align:center;">Start node</th>
+      {{else}}
+        <th colspan="2" style="text-align:center;">New node</th>
+      {{/if}}
+    </tr>
+    <tr>
+      <td>id</td>
+      <td>{{id}}</td>
+    </tr>
+    <tr>
+      <td>name</td>
+      <td><input type="text" name="custom" placeholder="add node name" value="{{name}}"></td>
+    </tr>
+    <tr>
+      <td>label</td>
+      <td>{{> labels}}</td>
+    </tr>
+    <tr>
+      <td>updatedAt</td>
+      <td>{{updatedAt}}</td>
+    </tr>
+    <tr>
+      <td>custom</td>
+      <td><input type="text" name="custom" placeholder="add custom value" value="{{custom}}"></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        {{> nodeButtons}}
+      </td>
+    </tr>
+  </table>
+</template>
+
+<template name="labels">
+  <select name="label">
+    <option value="Person">Person</option> 
+    <option value="Place">Place</option>
+    <option value="Object">Object</option>
+  </select>
+</template>
+
+<template name="nodeButtons">
+  <button type="button" {{delete_disabled}}>Delete</button>
+  <button type="button" {{update_disabled}}>Update</button>
+  <button type="button" {{create_disabled}}>Create</button>
+</template>
+
+<template name="connect">
+  <table class="{{class}}">
+    {{#if selected}}
+      <tr>  
+        {{#if links}}
+          <th>Link</th>
+          <select name="links">
+            {{#each links}}
+              <option value="{{id}}">{{id}} {{name}}</option> 
+            {{/each}}
+          </select>
+        {{else}}
+          <th colspan="2">Link</th>
+        {{/if}}
+      </tr>
+      <tr>
+        <td>id</td>
+        <td>value</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td><input type="text" name="name" placeholder="add link name" value="{{name}}"></td>
+      </tr>
+      <tr>
+        <td>type</td>
+        <td>{{> type}}</td>
+      </tr>
+      <tr>
+        <td>updatedAt</td>
+        <td>{{updatedAt}}</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td><input type="text" name="custom" placeholder="add custom value" value="{{custom}}"></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          {{> linkButtons}}
+        </td>
+      </tr>
+    {{/if}}
+  </table>
+</template>
+
+<template name="type">
+  <select name="type">
+    <option value="KNOWS">KNOWS</option> 
+    <option value="LIKES">LIKES</option>
+    <option value="OWNS">OWNS</option>
+    <option value="IN">IN</option>
+    <option value="CONTAINS">CONTAINS</option>
+  </select>
+</template>
+
+<template name="linkButtons">
+  <button type="button" {{no_link_disabled}}>Delete</button>
+  <button type="button" {{no_link_disabled}}>Update</button>
+  <button type="button" {{create_disabled}}>Create</button>
+</template>
+
+<template name="endNode">
+  <table class="{{class}}">
+    {{#if selected}}
+      <tr>  
+        <th colspan="2">End node</th>
+      </tr>
+      <tr>
+        <td>id</td>
+        <td>{{id}}</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td>{{name}}</td>
+      </tr>
+      <tr>
+        <td>label</td>
+        <td>{{> labels}}</td>
+      </tr>
+      <tr>
+        <td>updatedAt</td>
+        <td>{{updatedAt}}</td>
+      </tr>
+      <tr>
+        <td>custom</td>
+        <td>{{custom}}</td>
+      </tr>
+
+    {{else}}
+      {{#if start_selected}}
+        {{> selectEndMessage}}
+      {{else}}
+        {{> selectStartMessage}}
+      {{/if}}     
+    {{/if}}
+  </table>
+</template>
+
+<template name="selectStartMessage">
+  <p>Select a start node<br />
+  or create a new node</p>
+</template>
+
+<template name="selectEndMessage">
+  <p>Select an end node</p>
+</template>
