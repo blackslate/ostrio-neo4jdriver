@@ -7,22 +7,23 @@
 @class Neo4jData
 ###
 class Neo4jData
-  constructor: (@_node, @_isReactive = false, @_expiration = 0) -> 
-    if @_node?._service
-      @_service = _.clone @_node._service
-      delete @_node._service
-
+  constructor: (n, @_isReactive = false, @_expiration = 0) -> 
+    @node = n
     @__refresh()
   __refresh: -> @_expire = (+new Date) + @_expiration * 1000
 
   @define 'node',
     get: -> 
       if @_isReactive and @_expire < +new Date
-        @__refresh()
         @update()._node
       else
         @_node
-    set: (newVal) -> @_node = newVal unless EJSON.equals @_node, newVal
+    set: (value) -> 
+      unless EJSON.equals @_node, value
+        if value?._service
+          @_service = _.clone value._service
+          delete value._service
+        @_node = value
 
   ###
   @locus Server
@@ -41,8 +42,11 @@ class Neo4jData
   @name update
   @class Neo4jData
   @url http://neo4j.com/docs/2.2.5/rest-api-nodes.html#rest-api-get-node
+  @param {Boolean} force - Force node's data update
   @returns {Object | [Object] | [String]} - Depends from cypher query
   ###
-  update: ->
-    @node = @_service.self.__getAndProceed '__parseNode' if @_node and @_service and @_isReactive
+  update: (force = false) ->
+    if @_node and @_service and @_isReactive or force
+      @__refresh()
+      @node = @_service.self.__getAndProceed '__parseNode' 
     return @
