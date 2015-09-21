@@ -65,7 +65,7 @@ Meteor.startup(function() {
         "RETURN DISTINCT n, r"
       , { timestamp: timestamp }
       ).fetch()
-      //console.log(graph)
+      // console.log(graph)
 
       timestamp = time
 
@@ -93,9 +93,10 @@ Meteor.startup(function() {
               id: id
             , labels: neo4jItem.labels
             , label: neo4jItem.properties.name
-            , group: neo4jItem.labels[0]
+            , group: neo4jItem.labels[0] || ""
             }
             visjsItem = _.extend(visjsItem, neo4jItem.properties)
+            delete visjsItem.name // duplicate of label
             nodes.push(visjsItem)
             nodeIds.push(id) // Don"t treat it again
           }

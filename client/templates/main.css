@@ -37,6 +37,10 @@ table.selectNext {
   background-color: #fee;
 }
 
+table.create {
+  background-color: #ffe;
+}
+
 table p{
   text-align: center;
 }

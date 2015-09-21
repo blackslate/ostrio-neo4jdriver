@@ -1,7 +1,11 @@
+<template name="graph">
+  <div id="graph"></div>
+</template>
+
 <template name="form">
   <div id="form">
     {{> startNode}}
-    {{> connect}}
+    {{> edge}}
     {{> endNode}}
   </div>
 </template>
@@ -21,11 +25,11 @@
     </tr>
     <tr>
       <td>name</td>
-      <td><input type="text" name="custom" placeholder="add node name" value="{{name}}"></td>
+      <td><input type="text" name="label" placeholder="add node name" value="{{label}}"></td>
     </tr>
     <tr>
-      <td>label</td>
-      <td>{{> labels}}</td>
+      <td>{{group}}</td>
+      <td>{{> groups}}</td>
     </tr>
     <tr>
       <td>updatedAt</td>
@@ -43,8 +47,9 @@
   </table>
 </template>
 
-<template name="labels">
-  <select name="label">
+<template name="groups">
+  <select name="group">
+    <option value='' disabled selected style='display:none;'>Select...</option>
     <option value="Person">Person</option> 
     <option value="Place">Place</option>
     <option value="Object">Object</option>
@@ -52,68 +57,57 @@
 </template>
 
 <template name="nodeButtons">
-  <button type="button" {{delete_disabled}}>Delete</button>
-  <button type="button" {{update_disabled}}>Update</button>
-  <button type="button" {{create_disabled}}>Create</button>
+  <button type="button" name="delete" {{delete_disabled}}>Delete</button>
+  <button type="button" name="update" {{update_disabled}}>Update</button>
+  <button type="button" name="create" {{create_disabled}}>Create</button>
 </template>
 
-<template name="connect">
+<template name="edge">
   <table class="{{class}}">
     {{#if selected}}
       <tr>  
-        {{#if links}}
-          <th>Link</th>
-          <select name="links">
-            {{#each links}}
-              <option value="{{id}}">{{id}} {{name}}</option> 
-            {{/each}}
-          </select>
-        {{else}}
-          <th colspan="2">Link</th>
-        {{/if}}
+        <th colspan="2">Edge</th>
       </tr>
       <tr>
         <td>id</td>
-        <td>value</td>
-      </tr>
-      <tr>
-        <td>name</td>
-        <td><input type="text" name="name" placeholder="add link name" value="{{name}}"></td>
+        <td>{{id}}</td>
       </tr>
       <tr>
         <td>type</td>
-        <td>{{> type}}</td>
+        <td>{{> edgeTypes}}</td>
       </tr>
       <tr>
         <td>updatedAt</td>
         <td>{{updatedAt}}</td>
       </tr>
       <tr>
-        <td>name</td>
+        <td>custom</td>
         <td><input type="text" name="custom" placeholder="add custom value" value="{{custom}}"></td>
       </tr>
       <tr>
         <td colspan="2">
-          {{> linkButtons}}
+          {{> edgeButtons}}
         </td>
       </tr>
     {{/if}}
   </table>
 </template>
 
-<template name="type">
+<template name="edgeTypes">
   <select name="type">
+    <option value='' disabled selected style='display:none;'>Select...</option>
     <option value="KNOWS">KNOWS</option> 
     <option value="LIKES">LIKES</option>
     <option value="OWNS">OWNS</option>
     <option value="IN">IN</option>
     <option value="CONTAINS">CONTAINS</option>
   </select>
+
 </template>
 
-<template name="linkButtons">
-  <button type="button" {{no_link_disabled}}>Delete</button>
-  <button type="button" {{no_link_disabled}}>Update</button>
+<template name="edgeButtons">
+  <button type="button" {{delete_disabled}}>Delete</button>
+  <button type="button" {{update_disabled}}>Update</button>
   <button type="button" {{create_disabled}}>Create</button>
 </template>
 
@@ -129,11 +123,11 @@
       </tr>
       <tr>
         <td>name</td>
-        <td>{{name}}</td>
+        <td>{{label}}</td>
       </tr>
       <tr>
-        <td>label</td>
-        <td>{{> labels}}</td>
+        <td>group</td>
+        <td>{{group}}</td>
       </tr>
       <tr>
         <td>updatedAt</td>
