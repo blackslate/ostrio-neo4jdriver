@@ -1,0 +1,165 @@
+<template name="api">
+  <main>
+    <div id= "left">
+      {{> inspector}}
+      {{> queries}}
+    </div>
+    <div id="right">
+      {{> description}}
+      {{> command}}
+      {{> output}}
+    </div>
+  </main>
+</template>
+
+<template name="inspector">
+  <div id="inspector">
+    <div class="find">
+      <span>Show</span>
+      <select name="elementType">
+        <option value="nodes">Nodes</option> 
+        <option value="edges">Edges</option>
+      </select>
+      <select name="elements" size="8">
+        {{#each elements}}
+          <option value="{{id}}">{{id}}{{display}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="show">
+      <p>{{{selected_element}}}</p>
+    </div>
+  </div>
+</template>
+
+<template name="queries">
+  <div id="queries">
+    <!-- <select name="queries" size="10"> -->
+      {{#each queries}}
+        <!-- <option value="{{query}}">{{query}}</option>  -->
+        <p><a href="#{{id}}">{{query}}</a></p>
+      {{/each}}
+    <!-- </select> -->
+  </div>
+</template>
+
+<template name="description">
+  <div id="description">
+    {{> Template.dynamic template=description}}
+  </div>
+</template>
+
+<template name="command">
+  <div id="command">
+    {{> Template.dynamic template=command}}
+  </div>
+</template>
+
+<template name="output">
+  <div id="output">
+    
+  </div>
+</template>
+
+<template name="Neo4jDB">
+  Neo4jDB
+</template>
+
+<template name="Neo4jDB-description">
+  Neo4jDB description
+</template>
+
+<template name="propertyKeys">
+  propertyKeys
+</template>
+
+<template name="propertyKeys-description">
+  propertyKeys description
+</template>
+
+<template name="labels">
+  labels
+</template>
+
+<template name="labels-description">
+  labels description
+</template>
+
+<template name="relationshipTypes">
+  relationshipTypes
+</template>
+
+<template name="relationshipTypes-description">
+  relationshipTypes description
+</template>
+
+<template name="query">
+  query
+</template>
+
+<template name="query-description">
+  query description
+</template>
+
+<template name="queryOne">
+  queryOne
+</template>
+
+<template name="queryOne-description">
+  queryOne description
+</template>
+
+<template name="querySync">
+  querySync
+</template>
+
+<template name="querySync-description">
+  querySync description
+</template>
+
+<template name="queryAsync">
+  queryAsync
+</template>
+
+<template name="queryAsync-description">
+  queryAsync description
+</template>
+
+<template name="graph">
+  graph
+</template>
+
+<template name="graph-description">
+  graph description
+</template>
+
+<template name="cypher">
+  cypher
+</template>
+
+<template name="cypher-description">
+  cypher description
+</template>
+
+<template name="batch">
+  batch
+</template>
+
+<template name="batch-description">
+  batch description
+</template>
+
+<!-- <template name="stnh">
+  {{> Neo4jDB}}
+  {{> propertyKeys}}
+  {{> labels}}
+  {{> relationshipTypes}}
+  {{> query}}
+  {{> queryOne}}
+  {{> querySync}}
+  {{> queryAsync}}
+  {{> graph}}
+  {{> cypher}}
+  {{> batch}}
+</template> -->
+
