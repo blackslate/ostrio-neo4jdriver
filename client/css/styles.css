@@ -22,7 +22,15 @@ main {
   left: 24em;
   top: 0;
   width: calc(100% - 24em);
-  height: 100%;  
+  height: 100%;
+
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 #inspector {
@@ -31,16 +39,20 @@ main {
   background-color: #fee;
 
   display: -webkit-flex;
-  -webkit-flex-direction: column;
-
+  display: -ms-flexbox;
   display: flex;
+  
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
   flex-direction: column;
 }
 
 #inspector .find {
   width: 100%;
+  height: 100%;
   
   -webkit-flex: 0 0 12em;
+  -ms-flex: 0 0 12em;
   flex: 0 0 12em;
 }
 
@@ -52,15 +64,10 @@ main {
   width: 100%;
   
   -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   background-color: #edd;
   overflow: auto;
-}
-
-
-#inspector .find {
-  width: 100%;
-  height: 100%;
 }
 
 #queries {
@@ -74,9 +81,13 @@ main {
 
 #description {
   width: 100%;
-  height: 50%;
+  /*height: 50%;*/
   background-color: #eef;
   overflow: auto;
+
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto
 }
 
 #description h2 {
@@ -96,18 +107,35 @@ dt {
 
 #command {
   width: 100%;
-  height: 10%;
+/*  height: 10%; */
   background-color: #dde;
+
+  -webkit-flex: 0 0 8em;
+  -ms-flex: 0 0 8em;
+  flex: 0 0 8em;
 }
 
-#command textarea {
+/*#command textarea {
   width: 100%;
   font-family: monospace;
   box-sizing: border-box;
-}
+}*/
 
 #output {
   width: 100%;
-  height: 40%;
+  /*height: 40%;*/
   background-color: #ccd;
+  overflow: auto;
+
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto
+}
+
+p.query,
+p.query input,
+#output {
+  margin: 0;
+  font-family: monospace;
+  font-size: 1em;
 }

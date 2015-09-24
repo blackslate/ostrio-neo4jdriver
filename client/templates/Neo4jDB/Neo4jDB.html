@@ -1,7 +1,8 @@
 
 <template name="Neo4jDB">
-  <textarea>db = new Neo4jDB('http://localhost:7474', { username: 'neo4j', password: '1234'})</textarea>
-  <button type="button">Execute</button>
+  <p class="query">db = new Neo4jDB('<input type="text" name="url" value="http://localhost:7474">'<br />, { username: '<input type="text" name="username" value="neo4j">'<br />&nbsp;&nbsp;, password: '<input type="text" name="password" value="1234">'<br />})</p>
+  <!--button type="button" class="copy">Copy</button-->
+  <button type="submit" class="execute">Execute</button>
 </template>
 
 <template name="Neo4jDB-description">

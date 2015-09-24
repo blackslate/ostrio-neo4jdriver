@@ -7,6 +7,21 @@
 // elements
 // element
 // selected_element
+Result = Meteor.subscribe("result")
+
+Tracker.autorun(function () {
+  var result
+
+  var query = { query: Session.get("query") }
+
+  if (Result.findOne) {
+    result = Result.findOne( query )    
+  } else {
+    result = undefined   
+  }
+
+  Session.set("result", result)
+})
 
 Session.set("type", "nodes")
 Session.set("id", "0")
@@ -38,11 +53,6 @@ function dumpCallback(error, data) {
     }
   }
 }
-
-Template.inspector.onRendered(function () {
-  // var selected_element = this.find("div.show")
-
-})
 
 Template.inspector.helpers({
   elements: function () {
@@ -135,62 +145,28 @@ Template.command.helpers({
   }
 })
 
-// PUT THIS IN A PACKAGE //
+Template.output.helpers({
+  output: function () {  
+    var output = ""
 
-function prettifyHTML(input, padding) {
-  if (typeof padding !== "string") {
-    padding = ""
-  }
+    var result
 
-  switch (true) {
-    case (typeof input === "number"):
-      return input + '<br />'
-    case (typeof input === "string"):
-      return '"' + input + '"<br />'
-    case (input instanceof Array):
-      return prettifyArray(input, padding)
-    case (typeof input === "object"):
-      return prettifyObject(input, padding)
-  }
+    // var query = { query: Session.get("query") }
+    // query = {}
 
-  function prettifyArray(input, padding) {
-    //return "Arrays not yet treated<br />"
-    var output = input.reduce(function (string, item){
-      var value = prettifyHTML(item, padding + "&nbsp;&nbsp;")
-      return string + padding + ", " + value
-    }, "")
+    // if (Result.findOne) {
+    //   result = Result.findOne( query )    
+    // } else {
+    //   result = undefined   
+    // }
 
-    var offset = output.indexOf(",") + 1
-    output = "[<br /> " + padding + output.substring(offset) + padding + "]<br />"
+    // Session.set("result", result)
+
+    result = Session.get("result")
+    if (result) {
+      output = prettifyHTML(result.result)
+    }
 
     return output
   }
-
-  function prettifyObject(input, padding) {
-    var keys = Object.keys(input)
-    var keyLength = keys.reduce(function (max, key) {
-      var length = key.length
-      if (max < length) {
-        return length
-      }
-      return max
-    }, 0)
-
-    var output = keys.reduce(function (string, key) {
-      var value = prettifyHTML(input[key], padding + "&nbsp;&nbsp;")
-      var keyDelta = keyLength - key.length
-      var keyPadding = ""
-
-      while (keyDelta--) {
-        keyPadding += "&nbsp;"
-      }
-      return string + padding + ", " + key + ": " + keyPadding + value
-    }, "")
-
-    var offset = output.indexOf(",") + 1
-    output = "{<br /> " + padding + output.substring(offset) + padding + "}<br />"
-    
-    return output
-  }
-}
-
+})
