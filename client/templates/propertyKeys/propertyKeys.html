@@ -1,8 +1,16 @@
 
 <template name="propertyKeys">
-  propertyKeys
+  <p class="query">propertyKeys = db.propertyKeys()</p>
+  <!--button type="button" class="copy">Copy</button-->
+  <button type="submit" class="execute">Execute</button>
 </template>
 
 <template name="propertyKeys-description">
-  propertyKeys description
+  <h2>propertyKeys()</h2>
+  <p>Lists all property keys  ever used in the database.</p>
+  <ul>
+  <li>Returns: {[String]}</li>
+  </ul>
+  <h3>script</h3>
+  <pre>propertyKeys = db.propertyKeys()</pre>
 </template>

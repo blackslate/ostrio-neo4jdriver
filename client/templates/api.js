@@ -111,6 +111,7 @@ Template.queries.helpers({
   queries: function () {
     return [
       { id: "Neo4jDB", query: "Neo4jDB" }
+    , { id: "propertyKeys", query: "db.propertyKeys" }
     , { id: "labels", query: "db.labels" }
     , { id: "relationshipTypes", query: "db.relationshipTypes" }
     , { id: "query", query: "db.query" }
@@ -149,20 +150,7 @@ Template.output.helpers({
   output: function () {  
     var output = ""
 
-    var result
-
-    // var query = { query: Session.get("query") }
-    // query = {}
-
-    // if (Result.findOne) {
-    //   result = Result.findOne( query )    
-    // } else {
-    //   result = undefined   
-    // }
-
-    // Session.set("result", result)
-
-    result = Session.get("result")
+    var result = Session.get("result")
     if (result) {
       output = prettifyHTML(result.result)
     }

@@ -1,8 +1,55 @@
 
 <template name="query">
-  query
+  <p class="query">result = db.query(<input type="text" name="query" value="MATCH (n) RETURN n">)</p>
+  <!--button type="button" class="copy">Copy</button-->
+  <button type="submit" class="execute">Execute</button>
 </template>
 
+
+<!-- 
+query(settings, [opts, callback])
+
+Send query to Neo4j via transactional endpoint. This Transaction will be immediately committed. This transaction will be sent inside batch, so if you call multiple async queries, all of them will be sent in one batch in closest (next) event loop. Read reference for more info.
+
+
+Returns: {Neo4jCursor}
+db.query("MATCH (n) RETURN n").fetch()
+db.query("MATCH (n) WHERE id(n) = {id} RETURN n", {id},).fetch()
+db.query "MATCH (n) RETURN n", (error, cursor) -> cursor.fetch()
+ -->
+
 <template name="query-description">
-  query description
+  <h2>query(settings[, options][, callback])</h2>
+  <p>Sends query to Neo4j via the <a href="http://neo4j.com/docs/stable/rest-api-transactional.html">transactional cypher endpoint</a>. This transaction will be immediately committed. This transaction will be sent inside a batch, so if you call multiple async queries, all of them will be sent in one batch in closest (next) event loop. Read the <a href="http://neo4j.com/docs/2.2.5/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request">Neo4j reference</a> for more info.</p>
+  <ul>
+  <li>Returns: {Neo4jCursor}</li>
+  </ul>
+  <dl>
+    <dt><code>settings</code> {Object | String}</dt>
+    <dd>Cypher query as String or object of settings</dd>
+    <dl>
+      <dt><code>settings.cypher</code> {String}</dt>
+      <dd>Cypher query, alias: <code>settings.query</code></dd>
+      <dt><code>settings.opts</code> {Object}</dt>
+      <dd>Map of cypher query parameters, aliases: <code>settings.parameters</code>, <code>settings.params</code></dd>
+      <dt><code>settings.reactive</code> {Boolean}</dt>
+      <dd>Reactive nodes update when data is retrieved from Neo4jCursor. Default: <code>false</code>. Alias: <code>settings.reactiveNodes</code></dd>
+      <dt>settings.callback {Function}</dt>
+      <dd>Callback function. If passed, the method runs asynchronously. Alias: <code>settings.cb</code></dd>
+    </dl>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+    <dt><code>callback</code> {Function}</dt>
+    <dd>Callback function. If passed, the method runs asynchronously</dd>
+  </dl>
+  <h3>coffeescript</h3>
+  <pre>result = db.query("MATCH (n) RETURN n").fetch()
+result = db.query("MATCH (n) WHERE id(n) = {id} RETURN n", {id},).fetch()
+db.query "MATCH (n) RETURN n", (error, cursor) -> cursor.fetch()</pre>
+  <h3>JavaScript</h3>
+  <pre>result = db.query("MATCH (n) RETURN n").fetch()
+result = db.query("MATCH (n) WHERE id(n) = {id} RETURN n", {id}).fetch()
+db.query("MATCH (n) RETURN n", function (error, cursor) {
+  return cursor.fetch()
+}</pre>
 </template>

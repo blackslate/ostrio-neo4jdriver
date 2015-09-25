@@ -14,7 +14,8 @@ Package.onUse(function(api) {
   api.versionsFrom('1.1.0.3');
   api.addFiles('toolkit.js');
   api.export('prettify', ['client', 'server']);
-  api.export('prettifyHTML', ['client', 'server']);
+  api.export('prettifyHTML', ['client']);
+  api.export('getAll', ['client']);
 });
 
 Package.onTest(function(api) {

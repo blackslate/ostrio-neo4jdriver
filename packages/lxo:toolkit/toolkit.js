@@ -156,3 +156,25 @@ prettifyHTML = function prettifyHTML(input, padding) {
     return output
   }
 }
+
+
+getAll = function (command) {
+  Meteor.call("getAll", command, callback)
+
+  function callback(error, data) {
+    if (error) {
+      var doc = Result.findOne({ query: command })
+      var id = doc._id
+      var selector = { _id: id }
+      var modifier = { result: error, query: command }
+      modifier = _.extend(modifier, selector)
+      var options = {}
+      var callback = function (error, data) {
+        console.log(command + "_test result (", error, ")", data)
+      }
+      Result.update( selector, modifier, options, callback )
+    }
+    
+    console.log(command + "_test()", error, data)
+  }
+}

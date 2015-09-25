@@ -36,6 +36,7 @@ Meteor.startup(function() {
     Meteor.methods({
       dump: dump
     , Neo4jDB_test: Neo4jDB_test
+    , getAll: getAll
     })
 
     function dump() {
@@ -108,7 +109,7 @@ Meteor.startup(function() {
       var modifier = { query: "Neo4jDB", result: result }
       var options = {}
       var callback = function (error, data) {
-        //console.log("Neo4jDB_test result (", error, ")", data)
+        console.log("Neo4jDB_test result (", error, ")", data)
       }
       Result.upsert( selector, modifier, options, callback )
 
@@ -119,5 +120,32 @@ Meteor.startup(function() {
 
       return result
     } 
+
+    /** command may be: labels, propertyKeys, relationshipTypes */
+    function getAll(command) {
+      console.log("getAll", command)
+
+      try {
+        var result = db[command]()
+      } catch (exception) {
+        console.log(command + "_test", exception)
+      }
+
+      //console.log(result)
+
+      var selector = { query: command }
+      var modifier = { query: command, result: result }
+      //console.log(modifier)
+      var options = {}
+      var callback = function (error, data) {
+        console.log(command + "_test result (", error, ")", data)
+      }
+      Result.upsert( selector, modifier, options, callback )
+
+      // Provide data for the client callback
+      var result = (result instanceof Array) ? "array" : typeof result
+
+      return result
+    }
   })(db)
 })
