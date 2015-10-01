@@ -37,6 +37,7 @@ Meteor.startup(function() {
       dump: dump
     , Neo4jDB_test: Neo4jDB_test
     , getAll: getAll
+    , query: query
     })
 
     function dump() {
@@ -97,7 +98,7 @@ Meteor.startup(function() {
       // Tell the client only about propeties that are not objects
       var safeProps = ["url", "domain", "_maxListeners", "base", "root", "https", "_ready", "defaultHeaders"]
       var result = {}
-      result.NOTE = "CONNECTION MAY HAVE FAILED. NO EXCEPTIONS ARE THROWN. CHECK THE TERMINAL FOR ERROR MESSAGES."
+      // result.NOTE = "CONNECTION MAY HAVE FAILED. NO EXCEPTIONS ARE THROWN. CHECK THE TERMINAL FOR ERROR MESSAGES."
       safeProps.forEach(function (key, index, array) {
         result[key] = testDB[key]
       })
@@ -123,7 +124,7 @@ Meteor.startup(function() {
 
     /** command may be: labels, propertyKeys, relationshipTypes */
     function getAll(command) {
-      console.log("getAll", command)
+      //console.log("getAll", command)
 
       try {
         var result = db[command]()
@@ -144,6 +145,55 @@ Meteor.startup(function() {
 
       // Provide data for the client callback
       var result = (result instanceof Array) ? "array" : typeof result
+
+      return result
+    }
+
+    function query(parameters) {
+      var result 
+
+      //console.log(JSON.stringify(parameters))
+      // {"cypher":"MATCH (n) \nWHERE id(n) = {id} \nRETURN n"}
+      
+      try {
+        cursor = db.query(parameters)
+        result = cursor.fetch()
+      } catch (exception) {
+        console.log("query error:", exception)
+        result = exception.toString()
+
+        // Expected a parameter named id
+        // code: Neo.ClientError.Statement.ParameterMissing
+
+        // query [TypeError: Object.getOwnPropertyDescriptor called on non-object]
+      }
+
+      //console.log("query result:", result) // may be undefined
+
+      // { _cursor: [ { n: [Object] } ],
+      //   length: 1,
+      //   _current: 0,
+      //   hasNext: false,
+      //   hasPrevious: false }
+      
+      // Share the most recent connection details with the client
+      var selector = { query: "query" }
+      var modifier = { query: "query", result: result }
+      var options = {}
+      var callback = function (error, data) {
+        console.log("query result callback (", error, ")", data)
+        // ( null )
+        // { numberAffected: 1, insertedId: 'ocnFE3CZQEoFesMKa' }
+        // 
+        // ( [RangeError: Maximum call stack size exceeded] )
+        //  false
+      }
+      Result.upsert( selector, modifier, options, callback )
+
+      // Provide data for the client callback
+      var result = typeof result === "object"
+                 ? "query successful"
+                 : "query error"
 
       return result
     }

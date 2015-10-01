@@ -4,5 +4,29 @@
 </template>
 
 <template name="queryAsync-description">
-  queryAsync description
-</template>
+ <h2>queryAsync(cypher, [options])</h2>
+  <dl>
+    <dt><code>cypher</code> {String}</dt>
+    <dd>Cypher query as a String</dd>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+    <dt><code>callback</code> {Function}</dt>
+    <dd>Callback function with error and cursor arguments</dd>
+  </dl>
+  <p>Shortcut for query. Always runs asynchronously, even if no callback is passed. Best option for independent deletions.</p>
+  <ul>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jCursor-Class">Neo4jCursor</a>}</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>db.queryAsync "MATCH (n) WHERE id(n) = {id} RETURN n", {id}, (error, cursor)</pre>
+  <h3>JavaScript</h3>
+  <pre>db.queryAsync(
+    "MATCH (n) WHERE id(n) = {id} RETURN n"
+  , {id}
+  , function (error, cursor) {
+      if (!error) {
+        result = cursor.fetch()
+      }
+    }
+  )</pre>
+  </template>

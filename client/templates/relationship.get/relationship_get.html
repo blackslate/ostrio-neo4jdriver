@@ -1,0 +1,31 @@
+
+<template name="relationship_get">
+  <p class="query">db = new Neo4jDB('<input type="text" name="url" value="http://localhost:7474">'<br />, { username: '<input type="text" name="username" value="neo4j">'<br />&nbsp;&nbsp;, password: '<input type="text" name="password" value="1234">'<br />})</p>
+  <!--button type="button" class="copy">Copy</button-->
+  <button type="submit" class="execute">Execute</button>
+</template>
+
+<template name="relationship_get-description">
+  <h2>relationship.get(id[, reactive])</h2>
+  <dl>
+    <dt><code>id</code> {Number}</dt>
+    <dd>The id of the relationship</dd>
+    <dt><code>reactive</code> {Boolean}</dt>
+    <dd>Sets the <a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jRelationship-Class">Neo4jRelationship</a> instance to reactive mode</dd>
+  </dl>
+  <p>Gets a relationship object, by id. See the <a href="http://neo4j.com/docs/2.2.5/rest-api-relationships.html#rest-api-get-relationship-by-id">Neo4j reference</a> for more info..</p>
+  <ul>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jRelationship-Class">Neo4jRelationship</a>}
+</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>r = db.relationship.get 56
+r.property 'key', 'value'
+r.get()
+r.delete()</pre>
+  <h3>JavaScript</h3>
+  <pre>r = db.relationship.get(56)
+r.property('key', 'value')
+r.get()
+r.delete()</pre>
+</template>

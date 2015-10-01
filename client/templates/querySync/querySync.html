@@ -4,5 +4,18 @@
 </template>
 
 <template name="querySync-description">
-  querySync description
-</template>
+ <h2>querySync(cypher, [options])</h2>
+  <dl>
+    <dt><code>cypher</code> {String}</dt>
+    <dd>Cypher query as a String</dd>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+  </dl>
+  <p>Shortcut for query. Always runs synchronously, without any callback.</p>
+  <ul>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jCursor-Class">Neo4jCursor</a>}</li>
+  </ul>
+  <h3>script</h3>
+  <pre>cursor = db.querySync("MATCH (n) WHERE id(n) = {id} RETURN n", {id})
+result = cursor.fetch()</pre>
+  </template>

@@ -3,6 +3,46 @@
   cypher
 </template>
 
+
 <template name="cypher-description">
-  cypher description
+  <h2>cypher(cypher[, options][, callback])</h2>
+  <dl>
+    <dt><code>settings</code> {Object | String} - a Cypher query as a String or as a settings object</dt>
+    <dd>
+    <dl>
+      <dt><code>settings.cypher</code> {String}</dt>
+      <dd>Cypher query, alias: settings.query</dd>
+      <dt><code>settings.opts</code> {Object}</dt>
+      <dd>Map of cypher query parameters, aliases: <code>settings.parameters</code>, <code>settings.params</code></dd>
+      <dt><code>settings.reactive</code> {Boolean}</dt>
+      <dd>Reactive nodes update while retrieving data from the Neo4jCursor. Default: <code>false</code>. Alias: <code>settings.reactiveNodes</code></dd>
+      <dt><code>settings.callback</code> {Function}</dt>
+      <dd>Callback function. If passed, the method runs asynchronously. Alias: <code>settings.cb</code></dd>
+    </dl>
+    </dd>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+    <dt><code>callback</code> {Function}</dt>
+    <dd>Callback function. If passed, the method runs asynchronously.</dd>
+  </dl>
+  <p>Sends a query to Neo4j via the cypher endpoint. This query will be sent inside a batch, so if you call multiple async queries, all of them will be sent in one batch in the next event loop. See the <a href="http://neo4j.com/docs/2.2.5/rest-api-transactional.html#rest-api-begin-and-commit-a-transaction-in-one-request">Neo4j reference</a> for more information.</p>
+  <ul>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jCursor-Class">Neo4jCursor</a>}</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>
+db.cypher("MATCH (n) RETURN n").fetch()
+db.cypher("MATCH (n) WHERE id(n) = {id} RETURN n", {id},).fetch()
+db.cypher "MATCH (n) RETURN n", (error, cursor) -> cursor.fetch()</pre>
+  <h3>JavaScript</h3>
+  <pre>
+cursor = db.cypher("MATCH (n) RETURN n")
+result = cursor.fetch()
+
+db.cypher("MATCH (n) WHERE id(n) = {id} RETURN n", {id}).fetch()
+db.cypher("MATCH (n) RETURN n",  function (error, cursor) {
+  if (!error) {
+    result = cursor.fetch()
+  }
+})</pre>
 </template>

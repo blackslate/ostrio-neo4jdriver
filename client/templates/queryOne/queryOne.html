@@ -4,5 +4,17 @@
 </template>
 
 <template name="queryOne-description">
-  queryOne description
-</template>
+ <h2>queryOne(cypher, [options])</h2>
+  <dl>
+    <dt><code>cypher</code> {String}</dt>
+    <dd>Cypher query as a String</dd>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+  </dl>
+  <p>Shortcut for query, which returns the first result from your query as plain Object.</p>
+  <ul>
+  <li>Returns: {Object}</li>
+  </ul>
+  <h3>script</h3>
+  <pre>db.queryOne("MATCH (n) LIMIT 1 RETURN n").n</pre>
+  </template>

@@ -3,6 +3,52 @@
   graph
 </template>
 
+
 <template name="graph-description">
-  graph description
-</template>
+ <h2>graph(settings, [opts, callback])</h2>
+  <dl>
+    <dt><code>settings</code> {Object | String} - a Cypher query as a String or as a settings object</dt>
+    <dd>
+    <dl>
+      <dt><code>settings.cypher</code> {String}</dt>
+      <dd>Cypher query, alias: settings.query</dd>
+      <dt><code>settings.opts</code> {Object}</dt>
+      <dd>Map of cypher query parameters, aliases: <code>settings.parameters</code>, <code>settings.params</code></dd>
+      <dt><code>settings.reactive</code> {Boolean}</dt>
+      <dd>Reactive nodes update while retrieving data from the Neo4jCursor. Default: <code>false</code>. Alias: <code>settings.reactiveNodes</code></dd>
+      <dt><code>settings.callback</code> {Function}</dt>
+      <dd>Callback function. If passed, the method runs asynchronously. Alias: <code>settings.cb</code></dd>
+    </dl>
+    </dd>
+    <dt><code>options</code> {Object}</dt>
+    <dd>Map of cypher query parameters</dd>
+    <dt><code>callback</code> {Function}</dt>
+    <dd>Callback function. If passed, the method runs asynchronously.</dd>
+  </dl>
+  <p>Request results as a graph representation. See the <a href="http://neo4j.com/docs/2.2.5/rest-api-transactional.html#rest-api-return-results-in-graph-format"></a> reference for more information.</p>
+  <ul>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jCursor-Class">Neo4jCursor</a>}</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>db.graph("MATCH ()-[r]-() RETURN DISTINCT r").fetch()
+db.graph("MATCH ()-[r {props}]-() RETURN DISTINCT r", {props: p1: 'v1', p2: 'v2'}).fetch()
+db.graph "MATCH ()-[r]-() RETURN DISTINCT r", (error, cursor) -> 
+  cursor.fetch()
+  # Returns an array of maps, each containing arrays of nodes and relationships:
+  # [{nodes: [{...}, {...}, {...}], relationships: [{...}, {...}, {...}]},
+  #  {nodes: [{...}, {...}, {...}], relationships: [{...}, {...}, {...}]},
+  #  {nodes: [{...}, {...}, {...}], relationships: [{...}, {...}, {...}]}]</pre>
+  <h3>JavaScript</h3>
+  <pre>db.graph("MATCH ()-[r]-() RETURN DISTINCT r").fetch()
+db.graph("MATCH ()-[r {props}]-() RETURN DISTINCT r", {props: p1: 'v1', p2: 'v2'}).fetch()
+db.graph("MATCH ()-[r]-() RETURN DISTINCT r", function (error, cursor) {
+  if (!error) {
+    result = cursor.fetch()
+  }
+})
+// Returns an array of maps, each containing arrays of nodes and relationships:
+// [ { nodes: [{...}, {...}, {...}]
+//   , relationships: [{...}, {...}, {...}]}
+//   }
+// , ...]</pre>
+  </template>

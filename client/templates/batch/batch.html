@@ -4,5 +4,80 @@
 </template>
 
 <template name="batch-description">
-  batch description
+  <h2>batch(tasks, [settings, callback])</h2>
+  <dl>
+    <dt><code>tasks</code> {[Object]} - Array of tasks</dt>
+    <dd>
+    <dl>
+      <dt><code>tasks.$.method</code> {String}</dt>
+      <dd>HTTP(S) method used to send this task, one of: 'POST', 'GET', 'PUT', 'DELETE', 'HEAD'</dd>
+      <dt><code>tasks.$.to</code> {String}</dt>
+      <dd>Endpoint (URL) for task</dd>
+      <dt><code>tasks.$.id</code> {Number}</dt>
+      <dd>[Optional] Unique id to identify the task. Must always be unique.</dd>
+      <dt><code>tasks.$.body</code> {mix}</dt>
+      <dd>[Optional] JSONable object which will be sent as data to the task</dd>
+    </dl>
+    </dd>
+    <dt><code>settings</code> {Object}</dt>
+    <dd>
+    <dl>
+      <dt><code>settings.reactive</code> {Boolean}</dt>
+      <dd>If true and if plain is true data of node(s) will be updated before returning</dd>
+      <dt><code>settings.plain</code> {Boolean}</dt>
+      <dd>If true, results will be returned as simple objects instead of as a Neo4jCursor</dd>
+    </dl>
+    </dd>
+  </dl>
+  <p>Sends tasks to the Neo4j batch endpoint. This method allows you to work directly with Neo4j REST API. Read the <a href="http://neo4j.com/docs/2.2.5/rest-api-batch-ops.html">Neo4j reference</a> for more information.</p>
+  <ul>
+  <li>Returns: {[Object]} - An array of Neo4jCursors or an array of Objects if plain is true</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>cursors = db.batch [
+  method: "POST"
+  to: db.__service.cypher.endpoint
+  body: 
+    query: "CREATE (n:BatchTest {data})"
+    params: data: BatchTest: true
+,
+  method: "POST"
+  to: db.__service.cypher.endpoint
+  body: query: "MATCH (n:BatchTest) RETURN n"
+  id: 999
+,
+  method: "POST"
+  to: db.__service.cypher.endpoint
+  body: query: "MATCH (n:BatchTest) DELETE n"]
+
+for cursor in cursors
+  if res._batchId is 999
+    cursor.fetch()</pre>
+  <h3>JavaScript</h3>
+  <pre>cursors = db.batch ([
+  { method: "POST"
+  , to: db.__service.cypher.endpoint
+  , body: {
+      query: "CREATE (n:BatchTest {data})"
+    , params: data: BatchTest: true
+    }
+  }
+, { method: "POST"
+  , to: db.__service.cypher.endpoint
+  , body: {
+      query: "MATCH (n:BatchTest) RETURN n"
+    , id: 999
+    }
+  }
+, { method: "POST"
+  , to: db.__service.cypher.endpoint
+  , body: query: "MATCH (n:BatchTest) DELETE n"
+  }
+])
+
+for (cursor in cursors) {
+  if (res._batchId === 999)
+    cursor.fetch()
+  }
+}</pre>
 </template>

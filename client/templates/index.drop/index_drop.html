@@ -1,0 +1,28 @@
+
+<template name="index_drop">
+  <p class="query">db = new Neo4jDB('<input type="text" name="url" value="http://localhost:7474">'<br />, { username: '<input type="text" name="username" value="neo4j">'<br />&nbsp;&nbsp;, password: '<input type="text" name="password" value="1234">'<br />})</p>
+  <!--button type="button" class="copy">Copy</button-->
+  <button type="submit" class="execute">Execute</button>
+</template>
+
+<template name="index_drop-description">
+  <h2>index.drop(label, key)</h2>
+  <dl>
+    <dt><code>label</code> {String}</dt>
+    <dd>Label name</dd>
+    <dt><code>key</code> {String}</dt>
+    <dd>Index key</dd>
+  </dl>
+  <p>Removes (drops) the given indexes for the given label. See the <a href="http://neo4j.com/docs/2.2.5/rest-api-schema-indexes.html#rest-api-drop-index">Neo4j reference</a> for more information.</p>
+  <ul>
+  <li>Returns: {Object}</li>
+  </ul>
+  <h3>coffeescript</h3>
+  <pre>db.nodes({uuid: 123}).labels.set 'Person'
+db.index.create 'Person', ['uuid']
+db.index.drop 'Person', 'uuid'</pre>
+  <h3>JavaScript</h3>
+  <pre>db.nodes({uuid: 123}).labels.set('Person')
+db.index.create('Person', ['uuid'])
+db.index.drop('Person', 'uuid')</pre>
+</template>
