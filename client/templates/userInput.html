@@ -10,7 +10,7 @@
 </template>
 
 <template name="opts">
-<span>{{#if this.optional}}<input type="checkbox" id="opts">{{/if}}{{#if this.key}}<label for="opts">opts: </label>{{/if}}<span>{</span> <textarea id="opts" rows="1" cols="60" data-type="object">{{opts}}</textarea> <span>}</span></span>
+<span>{{#if this.optional}}<input type="checkbox" id="opts" {{checked}}>{{/if}}{{#if this.key}}<label for="opts">opts: </label>{{/if}}<span>{</span> <textarea rows="1" cols="60" data-type="object">{{opts}}</textarea> <span>}</span></span>
 </template>
 
 <template name="reactive">

@@ -4,6 +4,7 @@ Session.setDefault("cypher_query", "MATCH (n) \n" +
 "RETURN n")
 Session.setDefault("reactive", false)
 Session.setDefault("opts", "id: 42")
+Session.setDefault("opts-checked", true)
 
 Template.userInput.events({
   "keyup textarea": function(event, template) {
@@ -28,6 +29,20 @@ function treatTextInput(event, template) {
   }
 }
 
+Template.opts.events({
+  "click input": function (event) {
+    var checked = event.currentTarget.checked
+    Session.set("opts-checked", checked)
+  }
+})
+
+Template.reactive.events({
+  "click input": function (event) {
+    var checked = event.currentTarget.checked
+    Session.set("reactive", checked)
+  }
+})
+
 Template.cypher_query.helpers({
   cypher_query: function () {
     return Session.get("cypher_query")
@@ -38,12 +53,8 @@ Template.opts.helpers({
   opts: function () {
     return Session.get("opts")
   }
-})
-
-Template.reactive.events({
-  "click input": function (event) {
-    var checked = event.currentTarget.checked
-    Session.set("reactive", checked)
+, checked: function () {
+    return Session.get("opts-checked") ? "checked" : ""
   }
 })
 

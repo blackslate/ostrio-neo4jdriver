@@ -34,12 +34,13 @@
 
 <template name="queries">
   <div id="queries">
-    <!-- <select name="queries" size="10"> -->
       {{#each queries}}
-        <!-- <option value="{{query}}">{{query}}</option>  -->
-        <p><a href="#{{id}}">{{query}}</a></p>
+        {{#if disabled}}
+          <p>{{query}}</p>
+        {{else}}
+          <p><a href="#{{id}}">{{query}}</a></p>
+        {{/if}}
       {{/each}}
-    <!-- </select> -->
   </div>
 </template>
 
@@ -60,18 +61,3 @@
     {{{output}}}
   </div>
 </template>
-
-<!-- <template name="stnh">
-  {{> Neo4jDB}}
-  {{> propertyKeys}}
-  {{> labels}}
-  {{> relationshipTypes}}
-  {{> query}}
-  {{> queryOne}}
-  {{> querySync}}
-  {{> queryAsync}}
-  {{> graph}}
-  {{> cypher}}
-  {{> batch}}
-</template> -->
-
