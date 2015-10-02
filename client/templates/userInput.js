@@ -6,6 +6,8 @@ Session.setDefault("reactive", false)
 Session.setDefault("opts", "id: 42")
 Session.setDefault("opts-checked", true)
 
+/* EVENTS */
+
 Template.userInput.events({
   "keyup textarea": function(event, template) {
     treatTextInput(event, template)
@@ -40,6 +42,21 @@ Template.reactive.events({
   "click input": function (event) {
     var checked = event.currentTarget.checked
     Session.set("reactive", checked)
+  }
+})
+
+
+/* HELPERS */
+
+Template.stringOrObject.helpers({
+  tabs: function () {
+    return [
+      { name: 'Object Syntax', slug: 'object' }
+    , { name: 'String Syntax', slug: 'string' }
+    ]
+  }
+, command: function () {
+    return Session.get("command")
   }
 })
 

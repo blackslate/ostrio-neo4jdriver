@@ -4,6 +4,34 @@
   <button type="submit" class="execute">Execute</button>
 </template>
 
+<template name="stringOrObject">  
+  {{#basicTabs tabs=tabs}}
+
+    {{#tabContent slug="string"}}
+      <pre id="query-string">db.{{command}}( {{#userInput}}
+  <!-- {{#if this.query}}
+    {{> cypher_query query=this.query}}
+  {{else}} -->
+    {{> cypher_query}}
+  <!-- {{/if} -->
+, {{> opts optional=true}}
+, {{> callback optional=true}}
+{{/userInput}})</pre>
+    {{/tabContent}}
+
+    {{#tabContent slug="object"}}
+      <pre id="query-object">db.{{command}}({ {{#userInput}}
+  {{> cypher_query key=true}}
+, {{> opts key=true optional=true}}
+, {{> reactive key=true optional=true}}
+, {{> callback key=true optional=true}}
+{{/userInput}}})</pre>
+    {{/tabContent}}
+
+  {{/basicTabs}}
+  <p><em>Actual result is a cursor. Result shown is <code>cursor.fetch()</code>, or the exception for an invalid query.<br />See the Terminal window for more details on errors.</em></p>
+</template>
+
 <template name="cypher_query">
 <span>{{#if this.optional}}<input type="checkbox" id="cypher">{{/if}}{{#if this.key}}<label for="cypher">cypher: </label>{{/if}}'<textarea id="cypher_query" rows="3" cols="60"
 >{{#if this.query}}{{this.query}}{{else}}{{cypher_query}}{{/if}}</textarea>'</span>

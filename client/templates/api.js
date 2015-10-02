@@ -4,10 +4,10 @@ Result = Meteor.subscribe("result")
 Tracker.autorun(function () {
   var result
 
-  var query = { query: Session.get("query") }
+  var command = { query: Session.get("command") }
 
   if (Result.findOne) {
-    result = Result.findOne( query )    
+    result = Result.findOne( command )    
   } else {
     result = undefined   
   }
@@ -19,7 +19,7 @@ Session.set("type", "nodes")
 Session.set("id", "0")
 Session.set("nodes", "0")
 Session.set("edges", "0")
-Session.set("query", window.location.hash.substring(1) || "Neo4jDB")
+Session.set("command", window.location.hash.substring(1) || "Neo4jDB")
 Session.set("data", { nodes: [], edges: [], LUT: {} } )
 Meteor.call("dump", dumpCallback)
 
@@ -111,8 +111,8 @@ Template.queries.helpers({
     , { id: "queryOne", query: "db.queryOne" }
     , { id: "querySync", query: "db.querySync" }
     , { id: "queryAsync", query: "db.queryAsync", disabled: true }
-    , { id: "graph", query: "db.graph", disabled: true }
-    , { id: "cypher", query: "db.cypher", disabled: true }
+    , { id: "graph", query: "db.graph" }
+    , { id: "cypher", query: "db.cypher" }
     , { id: "batch", query: "db.batch", disabled: true }
     , { id: "transaction", query: "db.transaction", disabled: true }
     , { id: "nodes", query: "db.nodes", disabled: true }
@@ -133,19 +133,19 @@ Template.queries.events({
     var href = event.currentTarget.href
     var index = href.indexOf("#") + 1
     var query = href.substring(index)
-    Session.set("query", query)
+    Session.set("command", query)
   }
 })
 
 Template.description.helpers({
   description: function () {
-    return Session.get("query") + "-description"
+    return Session.get("command") + "-description"
   }
 })
 
 Template.command.helpers({
   "command": function () {
-     return Session.get("query")
+     return Session.get("command")
   }
 })
 

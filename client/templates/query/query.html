@@ -1,26 +1,6 @@
 
 <template name="query">
-  {{#basicTabs tabs=tabs}}
-
-    {{#tabContent slug="string"}}
-      <pre id="query-string">db.query( {{#userInput}}
-  {{> cypher_query}}
-, {{> opts optional=true}}
-, {{> callback optional=true}}
-{{/userInput}})</pre>
-    {{/tabContent}}
-
-    {{#tabContent slug="object"}}
-      <pre id="query-object">db.query({ {{#userInput}}
-  {{> cypher_query key=true}}
-, {{> opts key=true optional=true}}
-, {{> reactive key=true optional=true}}
-, {{> callback key=true optional=true}}
-{{/userInput}}})</pre>
-    {{/tabContent}}
-
-  {{/basicTabs}}
-  <p><em>Actual result is a cursor. Result shown is <code>cursor.fetch()</code>, or the exception for an invalid query.<br />See the Terminal window for more details on errors.</em></p>
+  {{> stringOrObject}}
 </template>
 
 <!-- See sharedTemplates.html for other templates used here -->
