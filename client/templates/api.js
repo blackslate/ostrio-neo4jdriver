@@ -1,12 +1,4 @@
-// inspector
-// queries
-// description
-// command
-// output
 
-// elements
-// element
-// selected_element
 Result = Meteor.subscribe("result")
 
 Tracker.autorun(function () {
@@ -116,24 +108,23 @@ Template.queries.helpers({
     , { id: "relationshipTypes", query: "db.relationshipTypes" }
     , { id: "version", query: "db.version" }
     , { id: "query", query: "db.query" }
+    , { id: "queryOne", query: "db.queryOne" }
+    , { id: "querySync", query: "db.querySync" }
+    , { id: "queryAsync", query: "db.queryAsync" }
+    , { id: "graph", query: "db.graph" }
+    , { id: "cypher", query: "db.cypher" }
+    , { id: "batch", query: "db.batch" }
+    , { id: "transaction", query: "db.transaction" }
+    , { id: "nodes", query: "db.nodes" }
+    , { id: "relationship_create", query: "db.relationship.create" }
+    , { id: "relationship_get", query: "db.relationship.get" }
+    , { id: "constraint_create", query: "db.constraint.create" }
+    , { id: "constraint_get", query: "db.constraint.get" }
+    , { id: "constraint_drop", query: "db.constraint.drop" }
+    , { id: "index_create", query: "db.index.create" }
+    , { id: "index_get", query: "db.index.get" }
+    , { id: "index_drop", query: "db.index.drop" }
     ]
-    // , { id: "queryOne", query: "db.queryOne" }
-    // , { id: "querySync", query: "db.querySync" }
-    // , { id: "queryAsync", query: "db.queryAsync" }
-    // , { id: "graph", query: "db.graph" }
-    // , { id: "cypher", query: "db.cypher" }
-    // , { id: "batch", query: "db.batch" }
-    // , { id: "transaction", query: "db.transaction" }
-    // , { id: "nodes", query: "db.nodes" }
-    // , { id: "relationship_create", query: "db.relationship.create" }
-    // , { id: "relationship_get", query: "db.relationship.get" }
-    // , { id: "constraint_create", query: "db.constraint.create" }
-    // , { id: "constraint_get", query: "db.constraint.get" }
-    // , { id: "constraint_drop", query: "db.constraint.drop" }
-    // , { id: "index_create", query: "db.index.create" }
-    // , { id: "index_get", query: "db.index.get" }
-    // , { id: "index_drop", query: "db.index.drop" }
-    // ]
   }
 })
 

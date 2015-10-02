@@ -1,0 +1,27 @@
+
+<template name="userInput">
+  {{> Template.contentBlock}}
+  <button type="submit" class="execute">Execute</button>
+</template>
+
+<template name="cypher_query">
+<span>{{#if this.optional}}<input type="checkbox" id="cypher">{{/if}}{{#if this.key}}<label for="cypher">cypher: </label>{{/if}}'<textarea id="cypher_query" rows="3" cols="60"
+>{{#if this.query}}{{this.query}}{{else}}{{cypher_query}}{{/if}}</textarea>'</span>
+</template>
+
+<template name="opts">
+<span>{{#if this.optional}}<input type="checkbox" id="opts">{{/if}}{{#if this.key}}<label for="opts">opts: </label>{{/if}}<span>{</span> <textarea id="opts" rows="1" cols="60" data-type="object">{{opts}}</textarea> <span>}</span></span>
+</template>
+
+<template name="reactive">
+<span>{{#if this.optional}}<input type="checkbox" id="reactive">{{/if}}{{#if this.key}}<label for="reactive">reactive: </label>{{/if}}<select name="reactive" data-type="boolean" {{disabled}}>
+  <option value="true">true</option> 
+  <option value="false" selected>false</option>
+</select></span>
+</template>
+
+<template name="callback">
+<span>{{#if this.optional}}<input type="checkbox" id="callback">{{/if}}{{#if this.key}}<label for="callback">callback: </label>{{/if}}<span>function (error, data) {</span>
+    <textarea rows="1" cols="60" data-type="function">console.log(error, data)</textarea>
+  <span>}</span></span>
+</template>

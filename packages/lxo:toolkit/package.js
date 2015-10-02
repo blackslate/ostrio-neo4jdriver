@@ -1,3 +1,4 @@
+
 Package.describe({
   name: 'lxo:toolkit',
   version: '0.0.1',
@@ -16,6 +17,7 @@ Package.onUse(function(api) {
   api.export('prettify', ['client', 'server']);
   api.export('prettifyHTML', ['client']);
   api.export('getAll', ['client']);
+  api.export('getQuery', ['client']);
 });
 
 Package.onTest(function(api) {

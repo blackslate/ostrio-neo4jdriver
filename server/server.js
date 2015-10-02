@@ -37,7 +37,7 @@ Meteor.startup(function() {
       dump: dump
     , Neo4jDB_test: Neo4jDB_test
     , getAll: getAll
-    , query: query
+    , getQuery: getQuery
     })
 
     function dump() {
@@ -117,7 +117,7 @@ Meteor.startup(function() {
       // Provide data for the client callback
       var result = typeof testDB === "object"
                  ? "Connected to " + testDB.root
-                 : "Connection error"
+                 : "Connection error: see terminal for details"
 
       return result
     } 
@@ -144,22 +144,37 @@ Meteor.startup(function() {
       Result.upsert( selector, modifier, options, callback )
 
       // Provide data for the client callback
-      var result = (result instanceof Array) ? "array" : typeof result
+      var result = (result instanceof Array)
+                 ? "array"
+                 : typeof result
 
       return result
     }
 
-    function query(parameters) {
+    function getQuery(options) {
       var result 
+      var command = options.command
+      var fetchResult = options.fetchResult || false
+      var parameters = options.parameters
 
-      //console.log(JSON.stringify(parameters))
+      console.log(command)
+      console.log(JSON.stringify(parameters))
       // {"cypher":"MATCH (n) \nWHERE id(n) = {id} \nRETURN n"}
       
       try {
-        cursor = db.query(parameters)
-        result = cursor.fetch()
+        if (parameters instanceof Array) {
+          //result = db[command].apply(db, parameters)
+          result = db[command].apply(db, parameters)
+         } else {
+          result = db[command](parameters)
+        }
+
+        if (fetchResult) {
+          result = result.fetch()
+        }
+
       } catch (exception) {
-        console.log("query error:", exception)
+        console.log(command + " error:", JSON.stringify(exception))
         result = exception.toString()
 
         // Expected a parameter named id
@@ -168,7 +183,7 @@ Meteor.startup(function() {
         // query [TypeError: Object.getOwnPropertyDescriptor called on non-object]
       }
 
-      //console.log("query result:", result) // may be undefined
+      console.log(command + " result:", result) // may be undefined
 
       // { _cursor: [ { n: [Object] } ],
       //   length: 1,
@@ -177,11 +192,11 @@ Meteor.startup(function() {
       //   hasPrevious: false }
       
       // Share the most recent connection details with the client
-      var selector = { query: "query" }
-      var modifier = { query: "query", result: result }
+      var selector = { query: command }
+      var modifier = { query: command, result: result }
       var options = {}
       var callback = function (error, data) {
-        console.log("query result callback (", error, ")", data)
+        console.log(command + " result callback (", error, ")", data)
         // ( null )
         // { numberAffected: 1, insertedId: 'ocnFE3CZQEoFesMKa' }
         // 
@@ -192,8 +207,8 @@ Meteor.startup(function() {
 
       // Provide data for the client callback
       var result = typeof result === "object"
-                 ? "query successful"
-                 : "query error"
+                 ? command + " successful"
+                 : command + " error: see terminal for details"
 
       return result
     }
