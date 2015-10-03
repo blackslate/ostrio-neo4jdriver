@@ -3,17 +3,23 @@ Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
   try {
-    // var db = new Neo4jDB(
-    //   "http://localhost:7474"
-    // , { username: "neo4j"
-    //   , password: "1234"
-    //   }
     var db = new Neo4jDB(
       "http://neo4japiexplorer.sb05.stations.graphenedb.com:24789"
     , { username: "Neo4jAPIExplorer"
       , password: "umKd4EyyK1Dmq9TzJIfu"
       }
     )
+
+    if (!db._ready) {
+      // Connection to the GrapheneDB host probably failed
+      db = new Neo4jDB(
+        "http://localhost:7474"
+      , { username: "neo4j"
+        , password: "1234"
+        }
+      )
+    }
+  
     // **** IF THE CONNECTION FAILED NO ERROR/EXCEPTION IS THROWN ****
     // **** THE FOLLOWING OUTPUT IS DISPLAYED IN THE TERMINAL BUT ****
     // **** THERE IS NO WAY OF INFORMING THE CLIENT OF THE ERROR. ****

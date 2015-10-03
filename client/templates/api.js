@@ -96,7 +96,7 @@ Template.inspector.events({
   }
 , "change select[name=elements]": function (event) {
     var type = Session.get("type")
-    var id = type+parseInt(event.currentTarget.value, 10)
+    var id = event.currentTarget.value
     Session.set("id", id)
     Session.set(type, id)
   }
