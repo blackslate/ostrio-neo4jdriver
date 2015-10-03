@@ -118,9 +118,9 @@ Template.queries.helpers({
     , { id: "nodes", query: "db.nodes" }
     , { id: "relationship.create", query: "db.relationship.create", }
     , { id: "relationship.get", query: "db.relationship.get" }
-    , { id: "constraint_create", query: "db.constraint.create", disabled: true }
-    , { id: "constraint_get", query: "db.constraint.get", disabled: true }
-    , { id: "constraint_drop", query: "db.constraint.drop", disabled: true }
+    , { id: "constraint.create", query: "db.constraint.create"}
+    , { id: "constraint.get", query: "db.constraint.get"}
+    , { id: "constraint.drop", query: "db.constraint.drop"}
     , { id: "index_create", query: "db.index.create", disabled: true }
     , { id: "index_get", query: "db.index.get", disabled: true }
     , { id: "index_drop", query: "db.index.drop", disabled: true }

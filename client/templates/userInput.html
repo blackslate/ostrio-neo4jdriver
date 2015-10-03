@@ -59,3 +59,19 @@
     <textarea rows="1" cols="60" data-type="function">console.log(error, data)</textarea>
   <span>}</span></span>
 </template>
+
+<template name="label">
+  <span>{{#if this.optional}}<input type="checkbox">{{/if}}<input type="text" name="label" value="{{label}}" placeholder="Label"></span>
+</template>
+
+<template name="key">
+  <span>{{#if this.optional}}<input type="checkbox">{{/if}}<input type="text" name="keys" value="{{key}}" placeholder="Key"></span>
+</template>
+
+<template name="keys">
+  <span><input type="text" name="keys" value="{{keys}}" placeholder="Keys" data-type="array"></span>
+</template>
+
+<template name="type">
+  <span>{{#if this.optional}}<input type="checkbox">{{/if}}<input type="text" name="type" value="{{type}}" placeholder="Type"></span>
+</template>

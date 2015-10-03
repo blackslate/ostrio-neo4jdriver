@@ -313,8 +313,10 @@ getQuery = function getQuery(command, postOp, inputs) {
       switch (dataType) {
         case "boolean":
           return getBoolean(string)
-       case "number":
+        case "number":
           return getNumber(string)
+        case "array":
+          return getArray(string)
         case "object":
           return getEvaluatedObject(string)
         case "function":
@@ -343,6 +345,36 @@ getQuery = function getQuery(command, postOp, inputs) {
         } else {
           return value
         }
+      }
+
+      function getArray(string) {
+        // User should ideally put "quotes" around each string, but
+        // that is tedious, so we can consider that " strings " 
+        // wrapped in quotes containg leading or trailing whitespace
+        // that should be preserved, and that no strings contain
+        // commas.
+        var array = string.split(",")
+        var regex = /(^["'])(.+)\1$/
+        var result
+
+        array = array.map(function (item, index, array) {
+          item = item.trim()
+          result = regex.exec(item)
+          if (result) {
+            item = result[2]
+          }
+          return item
+        })
+
+        array = array.filter(function (item) {
+          return item !== ""
+        })
+
+        if (!array.length) {
+          array = false
+        }
+        
+        return array
       }
 
       function getEvaluatedObject(string) {
