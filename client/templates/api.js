@@ -17,8 +17,8 @@ Tracker.autorun(function () {
 
 Session.set("type", "nodes")
 Session.set("id", "0")
-Session.set("nodes", "0")
-Session.set("edges", "0")
+Session.set("nodes", "nodes0")
+Session.set("edges", "edges0")
 Session.set("command", window.location.hash.substring(1) || "Neo4jDB")
 Session.set("data", { nodes: [], edges: [], LUT: {} } )
 
@@ -40,10 +40,10 @@ function refreshInspector() {
       function addToLUT(item, index, array) {
         id = item.id
         if (!ids[this]) {
-          Session.set(this, id)
+          Session.set(this, this+id)
           ids[this] = id
         }
-        LUT[id] = item
+        LUT[this+id] = item
       }
     }
   }
@@ -74,7 +74,7 @@ Template.inspector.helpers({
         display += item.name ? " " + item.name : ""
       }
 
-      return {id: item.id, display: display}
+      return {id: item.id, display: display, type: type}
     })
   }
 , selected_element: function () {
@@ -95,8 +95,8 @@ Template.inspector.events({
     Session.set("id", id)
   }
 , "change select[name=elements]": function (event) {
-    var id = parseInt(event.currentTarget.value, 10)
     var type = Session.get("type")
+    var id = type+parseInt(event.currentTarget.value, 10)
     Session.set("id", id)
     Session.set(type, id)
   }

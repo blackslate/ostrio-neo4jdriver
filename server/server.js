@@ -3,10 +3,15 @@ Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
   try {
+    // var db = new Neo4jDB(
+    //   "http://localhost:7474"
+    // , { username: "neo4j"
+    //   , password: "1234"
+    //   }
     var db = new Neo4jDB(
-      "http://localhost:7474"
-    , { username: "neo4j"
-      , password: "1234"
+      "http://neo4japiexplorer.sb05.stations.graphenedb.com:24789"
+    , { username: "Neo4jAPIExplorer"
+      , password: "umKd4EyyK1Dmq9TzJIfu"
       }
     )
     // **** IF THE CONNECTION FAILED NO ERROR/EXCEPTION IS THROWN ****
@@ -43,15 +48,17 @@ Meteor.startup(function() {
     function dump() {
       var query = 
       "MATCH (node) " +
-      "OPTIONAL MATCH (node)-[edge]->() " +
-      "RETURN DISTINCT node, edge " +
-      "ORDER BY node.id, edge.id"
+      "OPTIONAL MATCH ()-[edge]->() " +
+      "RETURN DISTINCT node, edge"
 
       var dump = db.query(query).fetch()
       //console.log(dump.length, dump)
       // [ { node: object, edge: object } ]
+      //console.log(JSON.stringify(dump))
+
     
-      var ids = [] // assumes node and edge ids are mutually unique
+      var edgeIds = []
+      var nodeIds = []
       var edges = []
       var nodes = []
       var result = {
@@ -60,10 +67,10 @@ Meteor.startup(function() {
       }
 
       dump.forEach(function (value, index, array) {
-        addToSet(value.node, nodes)
-        addToSet(value.edge, edges)
+        addToSet(value.node, nodes, nodeIds)
+        addToSet(value.edge, edges, edgeIds)
 
-        function addToSet(item, collection) {
+        function addToSet(item, collection, ids) {
           if (item) {
             var id = item.id
             if (ids.indexOf(id) < 0) {
@@ -76,6 +83,8 @@ Meteor.startup(function() {
 
       edges.sort(numerically)
       nodes.sort(numerically)
+
+      //console.log(JSON.stringify(result))
 
       return result
 
