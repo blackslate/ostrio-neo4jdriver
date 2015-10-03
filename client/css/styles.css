@@ -51,13 +51,17 @@ main {
   width: 100%;
   height: 100%;
   
-  -webkit-flex: 0 0 12em;
-  -ms-flex: 0 0 12em;
-  flex: 0 0 12em;
+  -webkit-flex: 0 0 16em;
+  -ms-flex: 0 0 16em;
+  flex: 0 0 16em;
 }
 
 #inspector .find select {
   width: 100%;
+}
+
+#inspector .find span button {
+  float: right;
 }
 
 #inspector .show {
@@ -107,6 +111,11 @@ dt {
 }
 dl dl {
   padding-left: 1em;
+}
+
+#queries a.disabled {
+  font-style: oblique;
+  color: #666;
 }
 
 #command {

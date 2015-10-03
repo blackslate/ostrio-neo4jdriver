@@ -15,12 +15,12 @@
 <template name="inspector">
   <div id="inspector">
     <div class="find">
-      <span>Show</span>
+      <span><span>Show</span><button type="button">Refresh</button></span> 
       <select name="elementType">
         <option value="nodes">Nodes</option> 
-        <option value="edges">Edges</option>
+        <option value="edges">Relationships</option>
       </select>
-      <select name="elements" size="8">
+      <select name="elements" size="12">
         {{#each elements}}
           <option value="{{id}}">{{id}}{{display}}</option>
         {{/each}}
@@ -35,11 +35,9 @@
 <template name="queries">
   <div id="queries">
       {{#each queries}}
-        {{#if disabled}}
-          <p>{{query}}</p>
+        {{#if disabled}}<p><a href="#{{id}}" class="disabled">{{query}}</a></p>
         {{else}}
-          <p><a href="#{{id}}">{{query}}</a></p>
-        {{/if}}
+        <p><a href="#{{id}}">{{query}}</a></p>{{/if}}  
       {{/each}}
   </div>
 </template>

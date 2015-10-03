@@ -21,27 +21,30 @@ Session.set("nodes", "0")
 Session.set("edges", "0")
 Session.set("command", window.location.hash.substring(1) || "Neo4jDB")
 Session.set("data", { nodes: [], edges: [], LUT: {} } )
-Meteor.call("dump", dumpCallback)
 
-function dumpCallback(error, data) {
-  if (!error) {
-    var LUT = {}
-    var ids = { nodeId: false, edgeId: false }
-    var id
+function refreshInspector() {
+  Meteor.call("dump", dumpCallback)
 
-    data.nodes.forEach(addToLUT, "nodes")
-    data.edges.forEach(addToLUT, "edges")
-    data.LUT = LUT
-    Session.set("data", data)
-    Session.set("id", Session.get("nodes"))
+  function dumpCallback(error, data) {
+    if (!error) {
+      var LUT = {}
+      var ids = { nodeId: false, edgeId: false }
+      var id
 
-    function addToLUT(item, index, array) {
-      id = item.id
-      if (!ids[this]) {
-        Session.set(this, id)
-        ids[this] = id
+      data.nodes.forEach(addToLUT, "nodes")
+      data.edges.forEach(addToLUT, "edges")
+      data.LUT = LUT
+      Session.set("data", data)
+      Session.set("id", Session.get("nodes"))
+
+      function addToLUT(item, index, array) {
+        id = item.id
+        if (!ids[this]) {
+          Session.set(this, id)
+          ids[this] = id
+        }
+        LUT[id] = item
       }
-      LUT[id] = item
     }
   }
 }
@@ -96,6 +99,9 @@ Template.inspector.events({
     var type = Session.get("type")
     Session.set("id", id)
     Session.set(type, id)
+  }
+, "click button": function (event) {
+    refreshInspector()
   }
 })
 
@@ -161,3 +167,5 @@ Template.output.helpers({
     return output
   }
 })
+
+refreshInspector()

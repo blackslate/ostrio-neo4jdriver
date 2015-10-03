@@ -44,7 +44,8 @@ Meteor.startup(function() {
       var query = 
       "MATCH (node) " +
       "OPTIONAL MATCH (node)-[edge]->() " +
-      "RETURN DISTINCT node, edge"
+      "RETURN DISTINCT node, edge " +
+      "ORDER BY node.id, edge.id"
 
       var dump = db.query(query).fetch()
       //console.log(dump.length, dump)
@@ -79,7 +80,7 @@ Meteor.startup(function() {
       return result
 
       function numerically(a, b) {
-        return b - a
+        return a.id - b.id
       }
     }
 
