@@ -121,9 +121,9 @@ Template.queries.helpers({
     , { id: "constraint.create", query: "db.constraint.create"}
     , { id: "constraint.get", query: "db.constraint.get"}
     , { id: "constraint.drop", query: "db.constraint.drop"}
-    , { id: "index_create", query: "db.index.create", disabled: true }
-    , { id: "index_get", query: "db.index.get", disabled: true }
-    , { id: "index_drop", query: "db.index.drop", disabled: true }
+    , { id: "index.create", query: "db.index.create" }
+    , { id: "index.get", query: "db.index.get" }
+    , { id: "index.drop", query: "db.index.drop" }
     ]
   }
 })

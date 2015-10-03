@@ -1,11 +1,13 @@
 
-<template name="index_drop">
-  <p class="query">db = new Neo4jDB('<input type="text" name="url" value="http://localhost:7474">'<br />, { username: '<input type="text" name="username" value="neo4j">'<br />&nbsp;&nbsp;, password: '<input type="text" name="password" value="1234">'<br />})</p>
-  <!--button type="button" class="copy">Copy</button-->
-  <button type="submit" class="execute">Execute</button>
+<template name="index.drop">
+  <pre id="query-string">db.index.create( {{#userInput}}
+  {{> label}}
+, {{> key}}
+)
+{{/userInput}}</pre>
 </template>
 
-<template name="index_drop-description">
+<template name="index.drop-description">
   <h2>index.drop(label, key)</h2>
   <dl>
     <dt><code>label</code> {String}</dt>

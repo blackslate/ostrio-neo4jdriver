@@ -7,5 +7,4 @@ Template["constraint.create"].events({
     }
     getQuery(options) // in packages/lxo:toolkit/toolkit.js 
   }
-
 })
