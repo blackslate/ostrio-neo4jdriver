@@ -4,6 +4,6 @@ Template.graph.events({
     var parent = document.querySelector(".tabs-content.active")
     var inputs = parent. children[0].children
 
-    getQuery("graph", true, inputs) //packages/lxo:toolkit/toolkit.js     
+    getQuery("graph", "fetch", inputs) //packages/lxo:toolkit/toolkit.js     
   }
 })

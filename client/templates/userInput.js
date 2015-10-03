@@ -51,8 +51,8 @@ Template.reactive.events({
 Template.stringOrObject.helpers({
   tabs: function () {
     return [
-      { name: 'Object Syntax', slug: 'object' }
-    , { name: 'String Syntax', slug: 'string' }
+      { name: 'String Syntax', slug: 'string' }
+    , { name: 'Object Syntax', slug: 'object' }
     ]
   }
 , command: function () {

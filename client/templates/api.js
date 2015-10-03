@@ -115,9 +115,9 @@ Template.queries.helpers({
     , { id: "cypher", query: "db.cypher" }
     , { id: "batch", query: "db.batch", disabled: true }
     , { id: "transaction", query: "db.transaction", disabled: true }
-    , { id: "nodes", query: "db.nodes", disabled: true }
-    , { id: "relationship_create", query: "db.relationship.create", disabled: true }
-    , { id: "relationship_get", query: "db.relationship.get", disabled: true }
+    , { id: "nodes", query: "db.nodes" }
+    , { id: "relationship.create", query: "db.relationship.create", }
+    , { id: "relationship.get", query: "db.relationship.get" }
     , { id: "constraint_create", query: "db.constraint.create", disabled: true }
     , { id: "constraint_get", query: "db.constraint.get", disabled: true }
     , { id: "constraint_drop", query: "db.constraint.drop", disabled: true }

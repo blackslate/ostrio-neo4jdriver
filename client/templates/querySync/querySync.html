@@ -1,6 +1,6 @@
 
 <template name="querySync">
-  <pre id="query-object">db.querySync({ {{#userInput}} 
+  <pre id="query-string">db.querySync({ {{#userInput}} 
   {{> cypher_query}}
 , {{> opts optional=true}}
 {{/userInput}}}</pre>

@@ -1,7 +1,7 @@
 
 <template name="userInput">
   {{> Template.contentBlock}}
-  <button type="submit" class="execute">Execute</button>
+<button type="submit" class="execute">Execute</button>
 </template>
 
 <template name="stringOrObject">  
@@ -16,7 +16,8 @@
   <!-- {{/if} -->
 , {{> opts optional=true}}
 , {{> callback optional=true}}
-{{/userInput}})</pre>
+).fetch()
+{{/userInput}}</pre>
     {{/tabContent}}
 
     {{#tabContent slug="object"}}
@@ -25,11 +26,12 @@
 , {{> opts key=true optional=true}}
 , {{> reactive key=true optional=true}}
 , {{> callback key=true optional=true}}
-{{/userInput}}})</pre>
+}).fetch()
+{{/userInput}}</pre>
     {{/tabContent}}
 
   {{/basicTabs}}
-  <p><em>Actual result is a cursor. Result shown is <code>cursor.fetch()</code>, or the exception for an invalid query.<br />See the Terminal window for more details on errors.</em></p>
+  <p><em>If an exception occurs for an invalid query, see the Terminal window for more details.</em></p>
 </template>
 
 <template name="cypher_query">
@@ -37,14 +39,18 @@
 >{{#if this.query}}{{this.query}}{{else}}{{cypher_query}}{{/if}}</textarea>'</span>
 </template>
 
+<template name="properties">
+<span>{{#if this.optional}}<input type="checkbox" id="properties" {{checked}}>{{/if}}{{#if this.key}}<label for="properties">properties: </label>{{/if}}<span>{</span> <textarea id="property" rows="1" cols="60" placeholder="Properties" data-type="object">{{properties}}</textarea> <span>}</span></span>
+</template>
+
 <template name="opts">
-<span>{{#if this.optional}}<input type="checkbox" id="opts" {{checked}}>{{/if}}{{#if this.key}}<label for="opts">opts: </label>{{/if}}<span>{</span> <textarea rows="1" cols="60" data-type="object">{{opts}}</textarea> <span>}</span></span>
+<span>{{#if this.optional}}<input type="checkbox" id="opts" {{checked}}>{{/if}}{{#if this.key}}<label for="opts">opts: </label>{{/if}}<span>{</span> <textarea id="options" rows="1" cols="60" data-type="object">{{opts}}</textarea> <span>}</span></span>
 </template>
 
 <template name="reactive">
 <span>{{#if this.optional}}<input type="checkbox" id="reactive">{{/if}}{{#if this.key}}<label for="reactive">reactive: </label>{{/if}}<select name="reactive" data-type="boolean" {{disabled}}>
-  <option value="true">true</option> 
-  <option value="false" selected>false</option>
+  <option value="true" selected>true</option> 
+  <option value="false">false</option>
 </select></span>
 </template>
 

@@ -1,6 +1,6 @@
 
 <template name="queryOne">
-  <pre id="query-object">db.queryOne({ {{#userInput}} 
+  <pre id="query-string">db.queryOne({ {{#userInput}} 
  {{> cypher_query query="MATCH (n) RETURN n LIMIT 1"}}
 , {{> opts optional=true}}
 {{/userInput}}}</pre>

@@ -1,8 +1,28 @@
 
 <template name="nodes">
-  <p class="query">node = node(<br />&nbsp;&nbsp;<input type="text" name="id" value="" placeholder="id number or object">'<br />, <input type="text" name="reactive" value="" placeholder="true or false"><br />)</p>
-  <!--button type="button" class="copy">Copy</button-->
-  <button type="submit" class="execute">Execute</button>
+   {{#basicTabs tabs=tabs}}
+
+    {{#tabContent slug="number"}}
+      <pre id="query-string">db.nodes( {{#userInput}}
+  {{> node optional=true}}
+, {{> reactive optional=true}}
+).get()
+{{/userInput}}</pre>
+    {{/tabContent}}
+
+    {{#tabContent slug="object"}}
+      <pre id="query-object">db.nodes( {{#userInput}}
+  {{> node optional=true object=true}}
+, {{> reactive optional=true}}
+).get()
+{{/userInput}}</pre>
+    {{/tabContent}}
+
+  {{/basicTabs}}
+</template>
+
+<template name="node">
+  <span>{{#if this.optional}}<input type="checkbox">{{/if}}{{#if this.object}}{<textarea id="node-data" rows="3" cols="60" data-type="object">{{node_props}}</textarea>}{{else}}<input type="text" name="node" value="{{node_id}}" placeholder="{{#if this.placeholder}}{{this.placeholder}}{{else}}Node id{{/if}}" data-type="number">{{/if}}</span> 
 </template>
 
 
@@ -14,13 +34,13 @@
     <dt><code>reactive</code> {Boolean}</dt>
     <dd>If <code>reactive</code> is <code>true</code>, the data of the associated node will be updated before returning.</dd>
   </dl>
-  <p>Creates or gets a node object. If no arguments are passed, then a new node will be created. See the <a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jDB-Class#version">Neo4j reference</a> for more info.</p>
+  <p>Creates or gets a node object. A new node will be created unless the id of an existing node is passed as a numerical argument. See the <a href="http://neo4j.com/docs/2.2.5/rest-api-nodes.html">Neo4j reference</a> for more info.</p>
   <ul>
-  <li>Returns: {Neo4jNode} - Neo4jNode instance</li>
-  <li></li>
+  <li>Returns: {<a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jNode-Class">Neo4jNode</a>} - Neo4jNode instance</li>
   </ul>
   <h3>script</h3>
   <pre>db.nodes().get()
 db.nodes({prop: 'value'}).get()
 db.nodes(123).get()</pre>
+  <p>The demo below uses <code>nodes(...).get()</code>. See <a href="https://github.com/VeliovGroup/neo4j-fiber/wiki/Neo4jNode-Class">Neo4jNode-Class</a> for all the operations that are possible with a Neo4j Node object.</p>
 </template>

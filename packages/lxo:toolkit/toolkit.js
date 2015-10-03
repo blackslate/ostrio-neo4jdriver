@@ -178,23 +178,23 @@ getAll = function getAll(command) {
   }
 }
 
-getQuery = function getQuery(command, fetchResult, inputs) {
-  // options = {
-  //   command: command
-  // , parameters: parameters
-  // , fetchResult: fetchResult
-  // }
+getQuery = function getQuery(command, postOp, inputs) {
+  var options = {}
+
+  if (typeof command === "object") {
+    // { command: <string>
+    // , object: <string>
+    // }
+    options = command
+  } else {
+    options.command = command
+    options.postOp = postOp || false
+  }
 
   if (!inputs) {
-    inputs = document.querySelector("#query-object").children
+    inputs = document.querySelector("#query-string").children
   }
-  var parameters = getParameters(inputs)
-
-  var options = {
-    command: command
-  , parameters: parameters
-  , fetchResult: fetchResult
-  }
+  options.parameters = getParameters(inputs)
 
   //var command = options.command
   Meteor.call("getQuery", options, callback)
@@ -260,6 +260,7 @@ getQuery = function getQuery(command, fetchResult, inputs) {
                 label = regex.exec(element.innerHTML)[0]
                 useObject = true
               break
+              case "INPUT": // fall through // ASSUME TO BE TEXT?
               case "TEXTAREA": // fall through
               case "SELECT":
                 value = element.value
@@ -312,6 +313,8 @@ getQuery = function getQuery(command, fetchResult, inputs) {
       switch (dataType) {
         case "boolean":
           return getBoolean(string)
+       case "number":
+          return getNumber(string)
         case "object":
           return getEvaluatedObject(string)
         case "function":
@@ -330,6 +333,16 @@ getQuery = function getQuery(command, fetchResult, inputs) {
             return false
         }
         return true
+      }
+
+      function getNumber(string) {
+        var value = parseInt(string, 10)
+        if (isNaN(value)) {
+          alert ("Number required")
+          return false
+        } else {
+          return value
+        }
       }
 
       function getEvaluatedObject(string) {

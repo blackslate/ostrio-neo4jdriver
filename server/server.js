@@ -154,23 +154,32 @@ Meteor.startup(function() {
     function getQuery(options) {
       var result 
       var command = options.command
-      var fetchResult = options.fetchResult || false
+      var object = options.object
+      var postOp = options.postOp || false
       var parameters = options.parameters
+      var source // db | db.<object>
 
+      if (object) {
+        source = db[object]
+      } else {
+        source = db
+      }
+
+      console.log(object)
       console.log(command)
       console.log(JSON.stringify(parameters))
       // {"cypher":"MATCH (n) \nWHERE id(n) = {id} \nRETURN n"}
       
       try {
         if (parameters instanceof Array) {
-          //result = db[command].apply(db, parameters)
-          result = db[command].apply(db, parameters)
+          //result = db.relationship.apply(db, parameters)
+          result = source[command].apply(source, parameters)
          } else {
-          result = db[command](parameters)
+          result = source[command](parameters)
         }
 
-        if (fetchResult) {
-          result = result.fetch()
+        if (postOp) {
+          result = result[postOp]()
         }
 
       } catch (exception) {
@@ -183,6 +192,10 @@ Meteor.startup(function() {
         // query [TypeError: Object.getOwnPropertyDescriptor called on non-object]
       }
 
+      if (object) {
+        // For feedback, include the object in the command string
+        command = object + "." + command
+      }
       console.log(command + " result:", result) // may be undefined
 
       // { _cursor: [ { n: [Object] } ],

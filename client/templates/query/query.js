@@ -4,7 +4,7 @@ Template.query.events({
     var parent = document.querySelector(".tabs-content.active")
     var inputs = parent. children[0].children
 
-    getQuery("query", true, inputs) //packages/lxo:toolkit/toolkit.js 
+    getQuery("query", "fetch", inputs) //packages/lxo:toolkit/toolkit.js 
   }
 })
 
