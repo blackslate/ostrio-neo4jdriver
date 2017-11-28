@@ -278,11 +278,14 @@ padding: 0.5em;
 box-sizing: border-box;
 margin: 0.5em 0;
 border-width: 1px;
-border-style: outset;
-border-radius: 0.25em;
+border-radius: 0.5em;
+overflow-x: auto;
 }
 pre {
 border-style: inset;
+}
+pre .output {;
+color: #999;
 }
 .preview {
 border: 1px solid #669;
@@ -499,9 +502,7 @@ text-align: left;
 .keyword{
 font-style:oblique;
 }
-code{
-padding: 0 0.2em;
-}
+
 section.optional {
 background-color: #f8f8ff;
 }
@@ -808,4 +809,11 @@ a.cursor {
     background: #bd362f;
     text-shadow: none;
     color: #FAFAFA;
+}
+
+.console {
+  
+}
+.console::before {
+  content: "$ ";
 }

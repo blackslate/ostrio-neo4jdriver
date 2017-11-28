@@ -3,6 +3,7 @@
   <title>Ostrio-neo4jdriver</title>
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <!--script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script-->
+
 </head>
 
 <body>
@@ -16,7 +17,7 @@
 <ul>
 <li><a href="#top">Overview</a></li>
 </ul>
-<h2>Installation</h2>
+<h2>Installation</h2
 <ul>
 <li><a href="#dependencies">Dependencies</a></li>
 <li><a href="#installation">Installing the driver</a></li>
@@ -154,21 +155,43 @@ The Meteor.js Neo4j Driver requires the following applications and modules to be
 <li><a href="http://neo4j.com/download/">Neo4j</a>
 </li>
 </ul>
+Before you continue, make sure that Neo4 is running:
+<pre class="prettyprint"><code class="language-bash">$ sudo service neo4j start
+$ sudo service neo4j status
+<span class="output">● neo4j.service - Neo4j Graph Database
+   Loaded: loaded (/lib/systemd/system/neo4j.service; disabled; vendor preset: enabled)
+   Active: active (running) since Tue 2017-11-28 12:08:07 MSK; 43min ago
+ Main PID: 11130 (java)
+    Tasks: 41
+   Memory: 53.4M
+      CPU: 30.024s
+   CGroup: /system.slice/neo4j.service
+           └─11130 /usr/bin/java -cp /var/lib/neo4j/plugins:/etc/neo4j:/usr/share/neo4j/lib/*:/var/lib/neo4j/plugins/* -server -XX:+UseG1
+
+&lt;stamp&gt;: Starting Neo4j.
+&lt;stamp&gt;: WARN  dbms.directories.certificates is deprecated.
+&lt;stamp&gt;: INFO  ======== Neo4j 3.3.0 ========
+&lt;stamp&gt;: INFO  Starting...
+&lt;stamp&gt;: INFO  Bolt enabled on 127.0.0.1:7687.
+&lt;stamp&gt;: INFO  Started.
+&lt;stamp&gt;: INFO  Remote interface available at http://localhost:7474/</span>
+</code></pre>
 </section>
 
 <section>
 <h2><a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installating the driver</h2>
 <p>Create a new Meteor project, if you don't already have one to work on:</p>
-<pre class="prettyprint"><code class="language-none">$meteor create MyProject</code></pre>
+<pre class="prettyprint"><code class="language-none console">meteor create MyProject</code></pre>
 <p>Change to your project directory and add the Meteor.js Neo4j Driver:</p>
 <pre class="prettyprint"><code class="language-none">$ cd MyProject
 $ meteor add ostrio:neo4jdriver</code></pre>
 <p>You might like to do a quick smoke test, to check that the driver is correctly installed. The first two commands below create a minimalist JavaScript file which will run on the server as soon as the Meteor environment is ready. The third command launches meteor.</p>
-<pre class="prettyprint"><code class="language-none">$ mkdir -p server/
-$ cat > server/server.js &lt;&lt; EOF
+<pre class="prettyprint"><code class="language-none"><span class="console">mkdir server/</span> 
+<span class="console">cat > server/server.js &lt;&lt; EOF
+import { Neo4jDB } from 'meteor/ostrio:neo4jdriver';
 console.log("Meteor.startup: Neo4jDB is a", typeof Neo4jDB)
-EOF
-$ meteor</code></pre>
+EOF</span> 
+<span class="console">meteor</code></pre>
 <p>Check in the Terminal window for output that looks like this:</p>
 <pre class="prettyprint">=> App running at: http://localhost:3000/
 &lt;timestamp&gt;Meteor.startup: Neo4jDB is a function</pre>
@@ -179,7 +202,9 @@ $ meteor</code></pre>
 <h2><a id="connection" class="anchor" href="#connection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Connecting to Neo4j</h2>
 <p>On the server, you want to create a connection to the Neo4j database before any other scripts are loaded. To do this, create or edit the JavaScript file called <code>server.js</code> at <code><em>MyProject</em>/server/</code> so that it has the following contents. You may need to use your own URL, username and password credentials, as shown in <em>italics</em>.</p>
 
-<pre class="prettyprint">
+<pre class="prettyprint"><code class="language-bash">$ cat > server/server.js << EOF
+import { Neo4jDB } from 'meteor/ostrio:neo4jdriver';
+
 // Essential: connect to Neo4j server
 db = new Neo4jDB(
   "<em>http://localhost:7474</em>"
@@ -192,14 +217,14 @@ db = new Neo4jDB(
 cursor = db.query(
   "MERGE " +
   "(hello {name:'Hello'})-[link:LINK]->(world {name:'World'}) " +
-  "RETURN hello, link, world"))
+  "RETURN hello, link, world")
 console.log(cursor.fetch())
-</pre>
+EOF
+</code></pre>
 
 <p>I've used <code>MERGE</code> rather than <code>CREATE</code> so that the 'Hello' and 'World' nodes are not created more than once. Here's output similar to what you might see in the Terminal window, if all goes well. (I've made it look pretty.)</p>
 
-<pre class="prettyprint">v2.2.5
-Successfully connected to Neo4j on http://localhost:7474
+<pre class="prettyprint">Successfully connected to Neo4j (v 3.3.0) on http://localhost:7474
 [ { hello: 
      { name: 'Hello',
        id: 6,
@@ -224,25 +249,24 @@ Successfully connected to Neo4j on http://localhost:7474
 <section>
 <h2><a id="call" class="anchor" href="#call" aria-hidden="true"><span class="octicon octicon-link"></span></a>Calling the Neo4j database from the browser</h2>
 <p>You can use a standard <code>Meteor.call()</code> method to pull data from the server into the browser client. It's time to delete the default files that Meteor created for you automatically, and to replace them with your own files.</p>
-<p>On your desktop, delete <code><em>MyProject</em>.html</code>, <code><em>MyProject</em>.css</code> and <code><em>MyProject</em>.js</code>. Create a new folder called <code>client</code>, and create a <code>body.html</code> file inside it.</p>
-<pre>$ rm <em>MyProject</em>.{css,html,js}
-$ mkdir -p client &amp;&amp; touch client/body.html</pre>
-<h3>Creating a Meteor template</h3>
-<p>Here's the content you can use for <code>body.html</code>:</p>
-<pre>&lt;body&gt;
+<p>On your desktop, delete the current contents of the <<code>client/</code> directory, and create a <code>body.html</code> file inside it.</p>
+<pre class="prettyprint"><code class="language-bash">$ rm client/*
+$ cat > client/body.html << EOF
+&lt;body&gt;
   {{&gt; main}}
-&lt;/body&gt;</pre>
+&lt;/body&gt;
+EOF</code></pre>
 <p>Now create a <code>templates</code> folder, and <code>main.html</code> and <code>main.js</code> files to define the main template:</p>
-<pre>$ mkdir -p client/templates
-$ touch client/templates/main.html
-$ touch client/templates/main.js</pre>
-<p>Here's the contents of the <code>main.html</code> file:</p>
-<pre>
+<pre class="prettyprint"><code class="language-bash">$ mkdir -p client/templates
+$ cat > client/templates/main.html << EOF
 &lt;template name="main"&gt;
   &lt;div id="graph"&gt;&lt;/div&gt;
-&lt;/template&gt;</pre>
-<p>On the client, you can start by creating a very simple JavaScript template to display a message retrieved from the server.</p>
-<pre>Template.main.onRendered(function() {
+&lt;/template&gt;
+EOF</code></pre>
+
+<p>Now you can create a very simple JavaScript template to display a message retrieved from the server.</p>
+<pre class="prettyprint"><code class="language-bash">$ cat > client/templates/main.js << EOF
+Template.main.onRendered(function() {
   var container = this.find('#graph')
 
   Meteor.call('graph', graphCallback)
@@ -253,7 +277,9 @@ $ touch client/templates/main.js</pre>
       container.innerHTML = data
     }
   }
-})</pre>
+})
+EOF
+</code></pre>
 <p>Here's what your project should look like on the desktop:</p>
 <figure>
 <img src="img/desktop.png" alt="Folder hierarchy" />
@@ -266,9 +292,10 @@ $ touch client/templates/main.js</pre>
 <p>You can use <code>db.graph(query[, options][, callback])</code> to request from the server a set of nodes and relationships that can be used to generate a visual representation of the graphic. The result will be returned as a <a href="https://docs.mongodb.org/manual/core/cursors/">MongoDB cursor</a>.</p>
 <p>If you provide a callback method, then the call to the Neo4j database will be made asynchronously. For now, you can keep it simple by making a synchronous call, which means that the result will be available to the very next line of code. This means that you can use <code>db.graph(...).fetch()</code> to convert the incoming cursor
 <p>Here's a simple Cypher query that will return all the relationships in your Neo4j database, along with the data for the start and end points of each relationship:</p>
-<pre>MATCH ()-[r]-() RETURN DISTINCT r</pre>
+<pre>MATCH (n)-[r]->(m) RETURN DISTINCT n,r,m;</pre>
 <p>You can modify your <code>server.js</code> script to include a <code>Meteor.methods</code> function that sends out this query:</p>
-<pre class="revised">
+<pre class="revised">import { Neo4jDB } from 'meteor/ostrio:neo4jdriver';
+
 var db = new Neo4jDB(
   'http://localhost:7474'
 , { username: 'neo4j'
@@ -288,7 +315,7 @@ db.query(
 
     // Make a synchronous call to the Neo4j database
     graph = db.graph(
-      <span class="red">"MATCH ()-[r]-() RETURN DISTINCT r"</span>
+      <span class="red">"MATCH (n)-[r]->(m) RETURN DISTINCT n,r,m;"</span>
     ).fetch()
 
     console.log("graph:", JSON.stringify(graph))
@@ -323,7 +350,7 @@ db.query(
 
     // Make a synchronous call to the Neo4j database
     graph = db.graph(
-      "MATCH ()-[r]-() RETURN DISTINCT r"
+      "MATCH (n)-[r]->(m) RETURN DISTINCT n,r,m;"
     ).fetch()
 
     <span class="new">//</span> console.log("graph:", JSON.stringify(graph))
@@ -350,7 +377,8 @@ db.query(
 })</span></pre>
 <p>This time when the server restarts and the browser refreshes, you should see the words "Hello World" in the browser window.</p>
 <p>For reference, here is the full listing of this simple format converter that runs on the server. I've tidied up the code a bit and wrapped it inside a <code>Meteor.startup</code> function. You can replace the current contents of your <code>server/server.js</code> file with this:</p>
-<pre>
+<pre class="prettyprint"><code class="language-javascript">import { Neo4jDB } from 'meteor/ostrio:neo4jdriver';
+
 Meteor.startup(function() {
   // Create the connection to the (remote) database. You may need to
   // edit the URL, username and password
@@ -379,7 +407,7 @@ Meteor.startup(function() {
 
       // Make a synchronous call to the Neo4j database
       graph = db.graph(
-        "MATCH ()-[r]-() RETURN DISTINCT r"
+        "MATCH (n)-[r]->(m) RETURN DISTINCT n,r,m;"
       ).fetch()
 
       // console.log("graph:", JSON.stringify(graph))
@@ -425,7 +453,7 @@ Meteor.startup(function() {
       return output
     }
   })
-})</pre>
+})</code></pre>
 </section>
 
 <section>
@@ -556,9 +584,7 @@ Template.main.onRendered(function() {
 
       // Get the graph data from the database in Neo4j format
       graph = db.graph(
-        'MATCH (n) ' +
-        'OPTIONAL MATCH ()-[r]-() ' +
-        'RETURN DISTINCT n, r'
+        'MATCH (n)-[r]->(m) RETURN DISTINCT n,r,m;'
       ).fetch()
 
      <span class="new">nodes = []
@@ -618,7 +644,7 @@ Template.main.onRendered(function() {
       return visGraph</span>
     }
   })</pre>
-<p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may appear in multiple times too, but only one reference is needed. The <code>nodeIds</code> and <code>edgeIds</code> arrays are used to track which nodes and edges have already been treated.</p>
+<p>One point to note is that there may be multiple references to the same node, but there is no need to include any duplicates in the DataSet. Depending on the query that is used, relationships may also appear multiple times, but only one reference is needed. The <code>nodeIds</code> and <code>edgeIds</code> arrays are used to track which nodes and edges have already been treated.</p>
 <p>When you have read through the code and understand what it is doing, you can copy and paste into your <code>server.js</code> script, to replace the current <code>Meteor.methods</code> method. When you save, Meteor will restart and the browser will refresh. If all goes well, this is what you should see in your browser:</p>
 <figure>
 <img src="img/hello_world.png" alt="Hello World as a graph" />
@@ -632,7 +658,7 @@ Template.main.onRendered(function() {
 <p>Right now, your graph is interactive, but it is not dynamic. You can't make changes to the graph in your browser, and if data in the database changes, your view will not update. You can discover how to deal with this in the next section.</p>
 <p>Before you do that, though, it's good to deploy your database to an online site, like <a href="http://neo4jdriver.meteor.com/">this</a>, so that you can check that everything works from development to production. The easiest way to do this is to set up a free hobby database with GrapheneDB, and to deploy your project to Meteor.com. This takes about 5 minutes.</p>
 <h3>Setting up a hobby database with GrapheneDB</h3>
-<p>GrapheneDB is a commercial site that hosts Neo4j databases. Here's <a href="http://www.graphenedb.com/docs">a starting point</a>where you can learn more about what the site offers. In particular, they offer a free service where you can run a sandbox database with up to 1,000 nodes and 10,000 relationships. This should be enough to get you started. If you don't already have an account there, go to <a href="https://app.graphenedb.com/signup">https://app.graphenedb.com/</a> and fill in the signup form.</p>
+<p>GrapheneDB is a commercial site that hosts Neo4j databases. Here's <a href="http://www.graphenedb.com/docs">a starting point</a> where you can learn more about what the site offers. In particular, they offer a free service where you can run a sandbox database with up to 1,000 nodes and 10,000 relationships. This should be enough to get you started. If you don't already have an account there, go to <a href="https://app.graphenedb.com/signup">https://app.graphenedb.com/</a> and fill in the signup form.</p>
 <figure>
 <img src="img/signup.png" alt="Creating an account on GrapheneDB" />
 <figcaption>Figure 5. Creating an account on GrapheneDB</figcaption>
@@ -688,7 +714,7 @@ $ meteor deploy <em>uniquename</em>.meteor.com</pre>
 <p>The vis.Network object will update the graph display whenever the objects in its DataSets change. You can change what's in a DataSet in real time using <code>add()</code>, <code>remove()</code> and <a href="http://visjs.org/docs/data/dataset.html#Methods">other methods</a>. To know what to add, remove and modify, you need to keep asking the Neo4j database for updates on what has changed. To discover what has changed, you need a way to record when each change was made.</p>
 <h3>Using a timestamp</h3>
 <p>Neo4j does not provide a built-in way to set a timestamp on every node or edge each time it is changed. It is possible to create an <a href="http://neo4j.com/docs/stable/server-unmanaged-extensions.html">unmanaged extension</a> or to use GraphAware's <a href="https://github.com/graphaware/neo4j-framework/tree/master/tx-api">Improved Transaction Event API</a> to do this, but this requires writing code in Java, and is outside the scope of this tutorial.</p>
-<p>The alternative is to manually update the timestamp on an <code>updatedAt</code> field in every edge and node, each time a change is made. It's possible that different apps running on different servers all access the same database. The current time may be set differently on different servers, so it is better to get the database itself to create the timestamp. You can do this with by adding a call <a href="http://neo4j.com/docs/milestone/query-functions-scalar.html#functions-timestamp"><code>TIMESTAMP()</code></a> function to each <code>CREATE</code> and <code>UPDATE</code> query. Here are two ways to set the <code>updatedAt</code> field of a node to the current database time:</p>
+<p>The alternative is to manually update the timestamp on an <code>updatedAt</code> field in every edge and node, each time a change is made. It's possible that different apps running on different servers all access the same database. The current time may be set differently on different servers, so it is better to get the database itself to create the timestamp. You can do this by adding a <a href="http://neo4j.com/docs/milestone/query-functions-scalar.html#functions-timestamp"><code>TIMESTAMP()</code></a> function to each <code>CREATE</code> and <code>UPDATE</code> query. Here are two ways to set the <code>updatedAt</code> field of a node to the current database time:</p>
 <pre>CREATE
 (n1 {name:"Time 1", updatedAt:TIMESTAMP()}),
 (n2 {name:"Time 2"})
@@ -706,9 +732,9 @@ RETURN n</pre>
 console.log("Time in Neo4j database:", timestamp)</pre>
 <p>Note the use of <code>querySynch()</code> so that the response is received before any further code is executed on the server.</p>
 <h3>Keeping track of time</h3>
-<p>Currently, the client makes a single call to the <code>graph</code> method on the server when the <code>main</code> template is first rendered. In this first call, you can retrieve all the data that you are interested in from the database, and save the time you made the query in a <code>timestamp</code> variable. You can get the client to repeat the call to the <code>graph</code> method an a regular basis, but only ask for nodes and edges that have been updated after the <code>timestamp</code> was set. You can then update the <code>timestamp</code>, ready for the next call.</p>
+<p>Currently, the client makes a single call to the <code>graph</code> method on the server when the <code>main</code> template is first rendered. In this first call, you can retrieve all the data that you are interested in from the database, and save the time you made the query in a <code>timestamp</code> variable. You can get the client to repeat the call to the <code>graph</code> method on a regular basis, but only ask for nodes and edges that have been updated after the <code>timestamp</code> was set. You can then update the <code>timestamp</code>, ready for the next call.</p>
 <p>In the client, the <code>data</code> received in the callback from the <code>graph</code> method will now contain only elements that have changed recently (or nothing at all). Instead of creating a new DataSet, you will need to add, update or remove elements from a persistent DataSet, and let vis.js modify its display accordingly.</p>
-<p>For simplicity, you can start by only treating new elements. You'l see how to extend this to updated and deleted elements shortly.</p>
+<p>For simplicity, you can start by only treating new elements. You'll see how to extend this to updated and deleted elements shortly.</p>
 <h3>Long polling</h3>
 <p>Instead of executing <code> Meteor.call('graph')</code> just once, you can set up a timeout to call it on a regular basis, using a technique known as long polling. First, you can rewrite the <code>Template.main.onRendered</code> function so that it behaves exactly as it did before, with the initial call triggered once by a <code>poll()</code> command:</p>
 <pre class="revised">Template.main.onRendered(function() {
